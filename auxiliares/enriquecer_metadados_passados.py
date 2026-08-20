@@ -16,8 +16,9 @@ import re
 import argparse
 from datetime import datetime
 
-# Garante que a saída do console aceite emojis e caracteres UTF-8
-sys.stdout.reconfigure(encoding='utf-8')
+# Garante que a saída do console aceite emojis e caracteres UTF-8 (compatível com Jupyter/Colab)
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 
 # Adiciona o diretório raiz do projeto ao sys.path para importar generate_df_jogos_passados
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
