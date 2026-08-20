@@ -715,6 +715,7 @@ def get_match_ids_from_league(scraper, league_url):
                     'Home_Score': h_score,
                     'Away_Score': a_score,
                     'Neutral_Location': is_neutral,
+                    'Tournament_ID': None,
                 }
                 
         # 2. Constrói e consulta os feeds de resultados diretamente para garantir fases e playoffs
@@ -872,6 +873,7 @@ def get_match_ids_from_league(scraper, league_url):
                                 'Home_Score': int(d.get('AG')) if d.get('AG') is not None and d.get('AG').isdigit() else None,
                                 'Away_Score': int(d.get('AH')) if d.get('AH') is not None and d.get('AH').isdigit() else None,
                                 'Neutral_Location': is_neutral,
+                                'Tournament_ID': t_id,
                             }
                             match_metadata[mid] = meta
                             

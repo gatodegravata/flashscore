@@ -123,17 +123,31 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         country = str(row['pais']).strip()
         season_name = str(row['temporada']).strip()
         
-        # Nome limpo do arquivo (substitui barras '/' e caracteres inválidos por '-')
+        # Nome limpo do arquivo: usa o alias da divisão (ex: AUSTRALIA 3 -> australia_australia-3_2026)
         country_clean = re.sub(r'[/\\:*?"<>| ]+', '-', country.lower()).strip('-')
         league_clean = re.sub(r'[/\\:*?"<>| ]+', '-', league_name.lower()).strip('-')
         season_clean = re.sub(r'[/\\:*?"<>| ]+', '-', str(season_name).lower()).strip('-')
         base_name = f"{country_clean}_{league_clean}_{season_clean}"
         
+        # Extrai o nome real da sub-liga a partir da URL (ex: 'npl-act' -> 'NPL ACT')
+        parts_url = league_url.split('/football/')
+        if len(parts_url) > 1 and len(parts_url[1].split('/')) > 1:
+            slug_raw = parts_url[1].split('/')[1]
+            slug_clean = re.sub(r'[-_]20\d{2}(?:[-_]20\d{2})?', '', slug_raw).strip('-_')
+            sub_league_name = slug_clean.replace('-', ' ').title() if slug_clean else league_name
+            # Siglas comuns em maiúsculas
+            sub_league_name = re.sub(r'\bNpl\b', 'NPL', sub_league_name, flags=re.IGNORECASE)
+            sub_league_name = re.sub(r'\bNsw\b', 'NSW', sub_league_name, flags=re.IGNORECASE)
+            sub_league_name = re.sub(r'\bAct\b', 'ACT', sub_league_name, flags=re.IGNORECASE)
+            sub_league_name = re.sub(r'\bRfef\b', 'RFEF', sub_league_name, flags=re.IGNORECASE)
+        else:
+            sub_league_name = league_name
+        
         filename = os.path.join(output_dir, f"{base_name}.json")
         zip_filename = f"{filename}.zip"
         
         print("\n" + "🟢" * 45)
-        print(f"🏆 LIGA: [{country.upper()}] {league_name} ({season_name})")
+        print(f"🏆 LIGA: [{country.upper()}] {league_name} ({season_name}) - Sub: {sub_league_name}")
         print("🟢" * 45)
         
         # Descompacta zip existente se houver
@@ -148,38 +162,44 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         existing_data = load_existing_country_data(filename)
         if existing_data:
             country_data = existing_data
-            existing_league = country_data['leagues'][0] if country_data.get('leagues') else None
+            if 'leagues' not in country_data or not isinstance(country_data['leagues'], list):
+                country_data['leagues'] = []
         else:
-            existing_league = {
-                'name': league_name,
-                'url': league_url,
-                'total_matches': 0,
-                'scraped_matches': 0,
-                'matches': []
-            }
             country_data = {
                 'country': str(country).upper(),
                 'league': league_name,
                 'season': str(season_name),
                 'scrape_date': datetime.now().isoformat(),
-                'total_leagues': 1,
-                'leagues': [existing_league]
+                'total_leagues': 0,
+                'leagues': []
             }
             
+        # Localiza a sub-liga específica pela URL dentro da lista 'leagues'
+        existing_league = None
+        norm_target_url = league_url.rstrip('/')
+        for l_obj in country_data['leagues']:
+            l_url = l_obj.get('url', '').rstrip('/')
+            if l_url == norm_target_url or (l_obj.get('name') and l_obj.get('name').lower() == sub_league_name.lower()):
+                existing_league = l_obj
+                break
+                
         if not existing_league:
             existing_league = {
-                'name': league_name,
+                'name': sub_league_name,
+                'tournament_id': None,
                 'url': league_url,
                 'total_matches': 0,
                 'scraped_matches': 0,
                 'matches': []
             }
-            country_data['leagues'] = [existing_league]
+            country_data['leagues'].append(existing_league)
             
-        # Extrai IDs já processados com sucesso do JSON
+        country_data['total_leagues'] = len(country_data['leagues'])
+            
+        # Extrai IDs já processados com sucesso do JSON desta sub-liga
         processed_ids = set()
         valid_matches = []
-        for m in existing_league['matches']:
+        for m in existing_league.get('matches', []):
             mid = m.get('Match_ID') or m.get('Id')
             if mid:
                 processed_ids.add(mid)
@@ -195,17 +215,23 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         
         if not processed_ids and os.path.exists(csv_filename):
             try:
-                df_prev = pd.read_csv(csv_filename, usecols=lambda c: c in ['Match_ID', 'Id', 'id', 'match_id'])
+                df_prev = pd.read_csv(csv_filename, low_memory=False)
+                if 'Sub_League' in df_prev.columns:
+                    df_sub = df_prev[df_prev['Sub_League'].astype(str).str.lower() == sub_league_name.lower()]
+                else:
+                    df_sub = df_prev
+                    
                 for col in ['Match_ID', 'Id', 'id', 'match_id']:
-                    if col in df_prev.columns:
-                        csv_ids = set(df_prev[col].dropna().astype(str))
+                    if col in df_sub.columns:
+                        csv_ids = set(df_sub[col].dropna().astype(str))
                         processed_ids.update(csv_ids)
-                        print(f"  📊 {len(csv_ids)} jogos já salvos encontrados no CSV consolidado!")
+                        if csv_ids:
+                            print(f"  📊 {len(csv_ids)} jogos já salvos desta sub-liga encontrados no CSV consolidado!")
                         break
             except Exception:
                 pass
         elif processed_ids:
-            print(f"  📄 {len(processed_ids)} jogos já salvos no JSON")
+            print(f"  📄 {len(processed_ids)} jogos já salvos no JSON para {sub_league_name}")
             
         # Coleta IDs e Metadados da liga
         res_match = get_match_ids_from_league(league_indexer, league_url)
@@ -218,6 +244,16 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         if not match_ids:
             print("  ⚠️ Nenhum jogo encontrado, pulando...")
             continue
+            
+        # Captura o Tournament_ID
+        current_tournament_id = None
+        if match_metadata:
+            for m_meta in match_metadata.values():
+                if m_meta.get('Tournament_ID'):
+                    current_tournament_id = m_meta.get('Tournament_ID')
+                    break
+        if current_tournament_id:
+            existing_league['tournament_id'] = current_tournament_id
             
         existing_league['total_matches'] = len(match_ids)
         new_match_ids = [mid for mid in match_ids if mid not in processed_ids]
@@ -259,7 +295,15 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                     try:
                         t0 = time.time()
                         base_info = match_metadata.get(m_id, {"Id": m_id, "Match_ID": m_id})
+                        base_info['Sub_League'] = sub_league_name
+                        if current_tournament_id:
+                            base_info['Tournament_ID'] = current_tournament_id
+                            
                         match_res = scraper_api.scrape_match(m_id, base_info=base_info)
+                        match_res['Sub_League'] = sub_league_name
+                        if current_tournament_id:
+                            match_res['Tournament_ID'] = current_tournament_id
+                            
                         elapsed = time.time() - t0
                         
                         with save_lock:

@@ -284,7 +284,7 @@ def parse_leg_info(note_str, home_score=None, away_score=None):
     return {'LegMatch': None, 'First_Leg_Home_Score': None, 'First_Leg_Away_Score': None, 'Agg_Home_Score': None, 'Agg_Away_Score': None}
 
 
-def process_match_to_row(match_data, league_name, country, season, prefer_bookmakers=['bet365', 'betfair', 'pinnacle']):
+def process_match_to_row(match_data, league_name, country, season, prefer_bookmakers=['bet365', 'betfair', 'pinnacle'], sub_league=None, tournament_id=None):
     """
     Converte dados de um jogo em uma linha de DataFrame
     """
@@ -295,10 +295,16 @@ def process_match_to_row(match_data, league_name, country, season, prefer_bookma
     row['Country'] = country
     row['Season'] = season
     
-    # Div = nome original da liga (ex: "Torneo Betano 2024")
+    # Div = nome/alias da divisão (ex: "AUSTRALIA 3" ou "Torneo Betano 2024")
     row['Div'] = league_name
     
-    # League = nome padronizado (ex: "ARGENTINA 1")
+    # Sub_League = nome real individual da liga (ex: "NPL NSW", "Primera RFEF Group 1")
+    row['Sub_League'] = sub_league or match_data.get('Sub_League') or match_data.get('Tournament_Name') or league_name
+    
+    # Tournament_ID = código oficial de 8 caracteres do torneio no Flashscore (ex: "IDVz16ES")
+    row['Tournament_ID'] = tournament_id or match_data.get('Tournament_ID') or match_data.get('tournament_id')
+    
+    # League = nome padronizado (ex: "AUSTRALIA 3")
     row['League'] = standardize_league_name(country=country, league=league_name)
     
     # Formatação de Data para DD/MM/AAAA
@@ -636,19 +642,31 @@ def generate_dataframe_from_json(json_file, output_csv=None, prefer_bookmakers=[
     # Processa cada liga e seus jogos
     all_rows = []
     total_matches = 0
+    root_league_alias = data.get('league')
     
     for league_data in leagues:
-        league_name = league_data.get('name', 'Unknown')
+        sub_league_name = league_data.get('name', 'Unknown')
+        t_id = league_data.get('tournament_id')
         matches = league_data.get('matches', [])
         
         if not matches:
             continue
         
-        print(f"   🔄 {league_name}: {len(matches)} jogos")
+        print(f"   🔄 {sub_league_name}: {len(matches)} jogos")
         total_matches += len(matches)
         
+        main_div_name = root_league_alias if root_league_alias else sub_league_name
+        
         for match in matches:
-            row = process_match_to_row(match, league_name, country, season, prefer_bookmakers)
+            row = process_match_to_row(
+                match, 
+                main_div_name, 
+                country, 
+                season, 
+                prefer_bookmakers,
+                sub_league=match.get('Sub_League', sub_league_name),
+                tournament_id=match.get('Tournament_ID', t_id)
+            )
             all_rows.append(row)
     
     if not all_rows:
