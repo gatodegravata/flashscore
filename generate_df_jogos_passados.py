@@ -658,7 +658,19 @@ def generate_dataframe_from_json(json_file, output_csv=None, prefer_bookmakers=[
     # Cria DataFrame
     df = pd.DataFrame(all_rows)
     
-    print(f"✓ DataFrame criado: {len(df)} linhas x {len(df.columns)} colunas")
+    # Se já existir um CSV prévio, une os dados preservando o histórico e atualizando novos jogos
+    if output_csv and os.path.exists(output_csv):
+        try:
+            df_existing = pd.read_csv(output_csv, low_memory=False)
+            df = pd.concat([df_existing, df], ignore_index=True)
+            for id_col in ['Match_ID', 'Id', 'id', 'match_id']:
+                if id_col in df.columns:
+                    df = df.drop_duplicates(subset=[id_col], keep='last')
+                    break
+        except Exception:
+            pass
+            
+    print(f"✓ DataFrame consolidado: {len(df)} linhas x {len(df.columns)} colunas")
     
     # Salva CSV se solicitado
     if output_csv:

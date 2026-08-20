@@ -176,7 +176,7 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
             }
             country_data['leagues'] = [existing_league]
             
-        # Extrai IDs já processados com sucesso
+        # Extrai IDs já processados com sucesso do JSON
         processed_ids = set()
         valid_matches = []
         for m in existing_league['matches']:
@@ -187,9 +187,25 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                     
         existing_league['matches'] = valid_matches
         existing_league['scraped_matches'] = len(valid_matches)
-                
-        if processed_ids:
-            print(f"  📄 {len(processed_ids)} jogos já salvos nesta liga")
+        
+        # Verifica se já existe o CSV consolidado para reutilizar os IDs (dispensa JSON pesado)
+        csv_output_dir = "dataframes_jogos_passados"
+        os.makedirs(csv_output_dir, exist_ok=True)
+        csv_filename = os.path.join(csv_output_dir, f"{base_name}.csv")
+        
+        if not processed_ids and os.path.exists(csv_filename):
+            try:
+                df_prev = pd.read_csv(csv_filename, usecols=lambda c: c in ['Match_ID', 'Id', 'id', 'match_id'])
+                for col in ['Match_ID', 'Id', 'id', 'match_id']:
+                    if col in df_prev.columns:
+                        csv_ids = set(df_prev[col].dropna().astype(str))
+                        processed_ids.update(csv_ids)
+                        print(f"  📊 {len(csv_ids)} jogos já salvos encontrados no CSV consolidado!")
+                        break
+            except Exception:
+                pass
+        elif processed_ids:
+            print(f"  📄 {len(processed_ids)} jogos já salvos no JSON")
             
         # Coleta IDs e Metadados da liga
         res_match = get_match_ids_from_league(league_indexer, league_url)
@@ -279,6 +295,8 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                 save_country_data(filename, country_data)
         else:
             print(f"  ✅ Liga já completa ({len(match_ids)} jogos)")
+            if os.path.exists(csv_filename):
+                continue
 
         # --- AUTO-GERAÇÃO DO CSV E COMPACTAÇÃO .ZIP DA LIGA ---
         csv_output_dir = "dataframes_jogos_passados"
