@@ -160,12 +160,16 @@ def enrich_historical_data(input_dir="jogos_passados", output_csv_dir="dataframe
             
             real_name = info['league_name'] if info else league_obj.get('name')
             tourn_id = info['tournament_id'] if info else league_obj.get('tournament_id')
+            official_season = info['season_name'] if info else league_obj.get('season')
             
             if real_name and league_obj.get('name') != real_name:
                 league_obj['name'] = real_name
                 modified = True
             if tourn_id and league_obj.get('tournament_id') != tourn_id:
                 league_obj['tournament_id'] = tourn_id
+                modified = True
+            if official_season and league_obj.get('season') != official_season:
+                league_obj['season'] = official_season
                 modified = True
                 
             # Atualiza cada partida
@@ -175,6 +179,9 @@ def enrich_historical_data(input_dir="jogos_passados", output_csv_dir="dataframe
                     modified = True
                 if tourn_id and m.get('Tournament_ID') != tourn_id:
                     m['Tournament_ID'] = tourn_id
+                    modified = True
+                if official_season and m.get('Season') != official_season:
+                    m['Season'] = official_season
                     modified = True
                     
         # Salva o JSON enriquecido e atualiza o ZIP

@@ -293,7 +293,7 @@ def process_match_to_row(match_data, league_name, country, season, prefer_bookma
     # Informações básicas
     row['Match_ID'] = match_data.get('Match_ID', match_data.get('Id'))
     row['Country'] = country
-    row['Season'] = season
+    row['Season'] = match_data.get('Season') or season
     
     # Div = nome/alias da divisão (ex: "AUSTRALIA 3" ou "Torneo Betano 2024")
     row['Div'] = league_name
