@@ -1,0 +1,41 @@
+# Python & Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+jogos_passados.zip
+dataframes_jogos_passados.zip
+log.json
+
+# Cache temporário de HTMLs brutos
+raw_html/
+data_teste/
+teste/
+
+# Binários do ChromeDriver
+chromedriver
+chromedriver.exe
+
+# Backups e logs temporários
+backups/
+*.log
+*.tmp
+.wdm/
+
+# Dados incrementais e temporários de scraper
+flashscore_v2_incremental.json
+flashscore_v2_results.xlsx
+flashscore_v2_results.json
+
+# IDEs e configurações de sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+"jogos_passados.zip" 
+"jogos_passados.zip" 
+"jogos_passados.zip" 
+"dataframes_jogos_passados.zip" 

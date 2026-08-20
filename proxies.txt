@@ -1,0 +1,11 @@
+# Lista de Proxies do Webshare (formato IP:Port:User:Pass)
+31.59.20.176:6754:ghmqrkay:a4hkq33pfr3p
+31.56.127.193:7684:ghmqrkay:a4hkq33pfr3p
+45.151.162.97:6014:ghmqrkay:a4hkq33pfr3p
+198.105.121.200:6462:ghmqrkay:a4hkq33pfr3p
+64.137.96.74:6641:ghmqrkay:a4hkq33pfr3p
+198.23.243.226:6361:ghmqrkay:a4hkq33pfr3p
+38.154.185.97:6370:ghmqrkay:a4hkq33pfr3p
+84.247.60.125:6095:ghmqrkay:a4hkq33pfr3p
+142.111.67.146:5611:ghmqrkay:a4hkq33pfr3p
+191.96.254.138:6185:ghmqrkay:a4hkq33pfr3p
