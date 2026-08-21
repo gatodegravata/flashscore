@@ -569,17 +569,24 @@ def get_stages_mapping():
 
 def get_match_ids_from_league(scraper, league_url):
     """Extrai todos os IDs de partidas de uma página de liga"""
-    display_name = league_url
+    # Garante que navega sempre para a aba /results/ da temporada
+    target_results_url = league_url.strip().rstrip('/')
+    if not target_results_url.endswith('/results'):
+        target_results_url = target_results_url + '/results/'
+    else:
+        target_results_url = target_results_url + '/'
+        
+    display_name = target_results_url
     for marker in ['/football/', '/futebol/']:
-        if marker in league_url:
-            display_name = league_url.split(marker)[1]
+        if marker in target_results_url:
+            display_name = target_results_url.split(marker)[1]
             break
     print(f"\n🔍 Carregando: {display_name}")
     
     # Verifica e recria driver se necessário
     recreate_driver_if_needed(scraper)
     
-    scraper.driver.get(league_url)
+    scraper.driver.get(target_results_url)
     
     try:
         import re
