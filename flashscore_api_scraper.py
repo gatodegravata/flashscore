@@ -95,7 +95,7 @@ class FlashScoreAPIScraper:
         }
         
         try:
-            resp = self.session.get(url, headers=self.headers_feed, timeout=8)
+            resp = self.session.get(url, headers=self.headers_feed, timeout=3.0)
             if resp.status_code != 200 or not resp.text:
                 return data
             
@@ -161,7 +161,7 @@ class FlashScoreAPIScraper:
         }
         
         try:
-            resp = self.session.get(url, headers=self.headers_feed, timeout=8)
+            resp = self.session.get(url, headers=self.headers_feed, timeout=3.0)
             if resp.status_code != 200 or not resp.text:
                 return stats_data
                 
@@ -267,7 +267,7 @@ class FlashScoreAPIScraper:
             odds_result["Odds_OU_2T"][f"OU_{line}"] = []
             
         try:
-            resp = self.session.get(url, headers=self.headers_graphql, timeout=8)
+            resp = self.session.get(url, headers=self.headers_graphql, timeout=3.0)
             if resp.status_code != 200:
                 return odds_result
                 
