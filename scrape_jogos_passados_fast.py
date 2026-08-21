@@ -109,6 +109,38 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         with open("proxies.txt", "r", encoding="utf-8") as f:
             proxy_list = [l.strip() for l in f if l.strip() and not l.startswith("#")]
             
+    # Carrega metadados oficiais de temporadas_ligas.json para cruzamento de alta velocidade
+    meta_json_path = "auxiliares/temporadas_ligas.json"
+    url_lookup = {}
+    if os.path.exists(meta_json_path):
+        try:
+            with open(meta_json_path, 'r', encoding='utf-8') as f_meta:
+                data_meta = json.load(f_meta)
+            for l in data_meta.get('leagues', []):
+                l_name = l.get('league_name')
+                c_name = l.get('country_name')
+                c_id = l.get('country_id')
+                for s in l.get('seasons', []):
+                    s_u = s.get('url', '').rstrip('/')
+                    info = {
+                        'league_name': l_name,
+                        'country_name': c_name,
+                        'country_id': c_id,
+                        'season_name': s.get('season_name'),
+                        'tournament_id': s.get('tournament_id'),
+                        'stage_id': s.get('stage_id')
+                    }
+                    if s_u:
+                        url_lookup[s_u] = info
+                        url_lookup[s_u + '/results'] = info
+                    if '/football/' in s_u:
+                        slug = s_u.split('/football/')[1].strip('/')
+                        url_lookup[slug] = info
+                        url_lookup[slug + '/results'] = info
+            print(f"📖 {len(url_lookup)} URLs de temporadas mapeadas na memória via {meta_json_path}!")
+        except Exception as e_meta:
+            print(f"⚠️ Aviso ao carregar {meta_json_path}: {e_meta}")
+
     # Inicializa navegador headless APENAS para coletar a lista de IDs das ligas (leve e rápido)
     print("\n🌐 Inicializando indexador de ligas...")
     league_indexer = FlashScoreScraper(headless=True, use_cache=False, proxy=proxy)
@@ -123,25 +155,39 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         country = str(row['pais']).strip()
         season_name = str(row['temporada']).strip()
         
+        # Cruzamento direto com os metadados oficiais
+        norm_u = league_url.rstrip('/')
+        meta_info = url_lookup.get(norm_u) or url_lookup.get(norm_u.replace('/results', ''))
+        if not meta_info and '/football/' in norm_u:
+            slug_u = norm_u.split('/football/')[1].strip('/')
+            meta_info = url_lookup.get(slug_u)
+            
+        official_sub_name = meta_info.get('league_name') if meta_info else None
+        official_season = meta_info.get('season_name') if meta_info else season_name
+        official_tid = meta_info.get('tournament_id') if meta_info else None
+        
         # Nome limpo do arquivo: usa o alias da divisão (ex: AUSTRALIA 3 -> australia_australia-3_2026)
         country_clean = re.sub(r'[/\\:*?"<>| ]+', '-', country.lower()).strip('-')
         league_clean = re.sub(r'[/\\:*?"<>| ]+', '-', league_name.lower()).strip('-')
         season_clean = re.sub(r'[/\\:*?"<>| ]+', '-', str(season_name).lower()).strip('-')
         base_name = f"{country_clean}_{league_clean}_{season_clean}"
         
-        # Extrai o nome real da sub-liga a partir da URL (ex: 'npl-act' -> 'NPL ACT')
-        parts_url = league_url.split('/football/')
-        if len(parts_url) > 1 and len(parts_url[1].split('/')) > 1:
-            slug_raw = parts_url[1].split('/')[1]
-            slug_clean = re.sub(r'[-_]20\d{2}(?:[-_]20\d{2})?', '', slug_raw).strip('-_')
-            sub_league_name = slug_clean.replace('-', ' ').title() if slug_clean else league_name
-            # Siglas comuns em maiúsculas
-            sub_league_name = re.sub(r'\bNpl\b', 'NPL', sub_league_name, flags=re.IGNORECASE)
-            sub_league_name = re.sub(r'\bNsw\b', 'NSW', sub_league_name, flags=re.IGNORECASE)
-            sub_league_name = re.sub(r'\bAct\b', 'ACT', sub_league_name, flags=re.IGNORECASE)
-            sub_league_name = re.sub(r'\bRfef\b', 'RFEF', sub_league_name, flags=re.IGNORECASE)
+        # Extrai o nome real da sub-liga a partir da URL caso não esteja no lookup
+        if official_sub_name:
+            sub_league_name = official_sub_name
         else:
-            sub_league_name = league_name
+            parts_url = league_url.split('/football/')
+            if len(parts_url) > 1 and len(parts_url[1].split('/')) > 1:
+                slug_raw = parts_url[1].split('/')[1]
+                slug_clean = re.sub(r'[-_]20\d{2}(?:[-_]20\d{2})?', '', slug_raw).strip('-_')
+                sub_league_name = slug_clean.replace('-', ' ').title() if slug_clean else league_name
+                # Siglas comuns em maiúsculas
+                sub_league_name = re.sub(r'\bNpl\b', 'NPL', sub_league_name, flags=re.IGNORECASE)
+                sub_league_name = re.sub(r'\bNsw\b', 'NSW', sub_league_name, flags=re.IGNORECASE)
+                sub_league_name = re.sub(r'\bAct\b', 'ACT', sub_league_name, flags=re.IGNORECASE)
+                sub_league_name = re.sub(r'\bRfef\b', 'RFEF', sub_league_name, flags=re.IGNORECASE)
+            else:
+                sub_league_name = league_name
         
         filename = os.path.join(output_dir, f"{base_name}.json")
         zip_filename = f"{filename}.zip"
@@ -186,13 +232,19 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
         if not existing_league:
             existing_league = {
                 'name': sub_league_name,
-                'tournament_id': None,
+                'tournament_id': official_tid,
+                'season': official_season,
                 'url': league_url,
                 'total_matches': 0,
                 'scraped_matches': 0,
                 'matches': []
             }
             country_data['leagues'].append(existing_league)
+            
+        if official_tid and not existing_league.get('tournament_id'):
+            existing_league['tournament_id'] = official_tid
+        if official_season and not existing_league.get('season'):
+            existing_league['season'] = official_season
             
         country_data['total_leagues'] = len(country_data['leagues'])
             
@@ -296,11 +348,13 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                         t0 = time.time()
                         base_info = match_metadata.get(m_id, {"Id": m_id, "Match_ID": m_id})
                         base_info['Sub_League'] = sub_league_name
+                        base_info['Season'] = official_season
                         if current_tournament_id:
                             base_info['Tournament_ID'] = current_tournament_id
                             
                         match_res = scraper_api.scrape_match(m_id, base_info=base_info)
                         match_res['Sub_League'] = sub_league_name
+                        match_res['Season'] = official_season
                         if current_tournament_id:
                             match_res['Tournament_ID'] = current_tournament_id
                             
