@@ -6,6 +6,7 @@ Validador e Coletor Ultrarrápido de Temporadas Flashscore (>= 2021)
 - Extrai todas as temporadas, tournament_id, stage_id e campeões históricos diretamente via GraphQL
 - Identifica com 100% de precisão a Temporada Atual (isCurrent: True) e as Temporadas Passadas
 - Absorve todos os campos do menu: is_cup, tipo, nivel, principal, mod, country.
+- Fallback automático para HTML da página da liga se o ID inicial falhar.
 """
 
 import json
@@ -44,13 +45,34 @@ def obter_temporadas_da_liga(league: dict) -> dict:
     t_id = league.get("tournament_id")
     s_id = league.get("stage_id")
 
-    # Se já tiver os IDs enriquecidos, pula o download do HTML
-    if not t_id or not s_id:
+    def query_graphql(tid, sid):
+        if not tid:
+            return None
+        gql_url = f"https://2.ds.lsapp.eu/pq_graphql?_hash=lph&tournamentId={tid}&tournamentStageId={sid or ''}&projectId=2"
+        try:
+            r = requests.get(gql_url, headers=HEADERS, timeout=8)
+            if r.status_code == 200:
+                data = r.json()
+                seasons_data = data.get('data', {}).get('getTournamentSeasons', {})
+                requested = seasons_data.get('requested')
+                others = seasons_data.get('other', [])
+                all_raw = ([requested] if requested else []) + others
+                if all_raw:
+                    return all_raw
+        except Exception:
+            pass
+        return None
+
+    # 1. Tenta direto com os IDs enriquecidos
+    all_seasons_raw = query_graphql(t_id, s_id)
+
+    # 2. Se falhar ou vier vazio, faz fallback buscando os IDs da página HTML da liga / archive
+    if not all_seasons_raw:
         archive_url = root_url.rstrip('/') + '/archive/'
         try:
-            r_page = requests.get(archive_url, headers=HEADERS, timeout=10)
+            r_page = requests.get(archive_url, headers=HEADERS, timeout=8)
             if r_page.status_code != 200:
-                r_page = requests.get(root_url, headers=HEADERS, timeout=10)
+                r_page = requests.get(root_url, headers=HEADERS, timeout=8)
 
             html = r_page.text
             
@@ -63,102 +85,82 @@ def obter_temporadas_da_liga(league: dict) -> dict:
             if not m_tourn:
                 m_tourn = re.search(r'1_\d+_([a-zA-Z0-9]{8})_', html)
 
-            t_id = t_id or (m_tourn.group(1) if m_tourn else None)
-            s_id = s_id or (m_stage.group(1) if m_stage else None)
+            t_id_html = m_tourn.group(1) if m_tourn else None
+            s_id_html = m_stage.group(1) if m_stage else None
+
+            all_seasons_raw = query_graphql(t_id_html, s_id_html)
         except Exception:
             pass
 
-    if not t_id:
+    if not all_seasons_raw:
         league_copy = dict(league)
         league_copy["total_seasons"] = 0
         league_copy["seasons"] = []
         return league_copy
 
-    try:
+    root_base_url = root_url.rstrip('/') + '/'
+    seasons_list = []
 
-        # Chama a API GraphQL
-        gql_url = f"https://2.ds.lsapp.eu/pq_graphql?_hash=lph&tournamentId={t_id}&tournamentStageId={s_id or ''}&projectId=2"
-        r_gql = requests.get(gql_url, headers=HEADERS, timeout=10)
+    for s in all_seasons_raw:
+        if not s:
+            continue
+        start = str(s.get('start', '')).strip()
+        end = str(s.get('end', '')).strip()
+        is_current = bool(s.get('isCurrent', False))
+        season_tid = s.get('tournamentId')
 
-        if r_gql.status_code != 200:
-            league_copy = dict(league)
-            league_copy["total_seasons"] = 0
-            league_copy["seasons"] = []
-            return league_copy
+        # Formata o nome da temporada (ex: "2025/2026" ou "2026")
+        if end and end != start:
+            s_name = f"{start}/{end}"
+            url_suffix = f"{start}-{end}"
+        else:
+            s_name = start
+            url_suffix = start
 
-        data = r_gql.json()
-        seasons_data = data.get('data', {}).get('getTournamentSeasons', {})
+        # Filtra apenas temporadas >= 2021
+        ano_ref = int(end) if (end and end.isdigit()) else (int(start) if start.isdigit() else 0)
+        if ano_ref < 2021:
+            continue
 
-        requested = seasons_data.get('requested')
-        others = seasons_data.get('other', [])
-        all_seasons_raw = ([requested] if requested else []) + others
+        # Extrai stage_id oficial
+        stages_obj = s.get('tournamentStages', {})
+        stage_req = stages_obj.get('requested', {})
+        stage_others = stages_obj.get('other', [])
+        stage_id_season = stage_req.get('id') if stage_req else (stage_others[0].get('id') if stage_others else None)
 
-        root_base_url = root_url.rstrip('/') + '/'
-        seasons_list = []
+        # Define a URL canônica correta
+        if is_current:
+            s_url = root_base_url
+        else:
+            s_url = root_base_url.rstrip('/') + f"-{url_suffix}/"
 
-        for s in all_seasons_raw:
-            if not s:
-                continue
-            start = str(s.get('start', '')).strip()
-            end = str(s.get('end', '')).strip()
-            is_current = bool(s.get('isCurrent', False))
-            season_tid = s.get('tournamentId')
+        # Campeão
+        winner = None
+        winners_raw = s.get('winners')
+        if winners_raw and isinstance(winners_raw, list) and len(winners_raw) > 0 and winners_raw[0]:
+            winner = winners_raw[0].get('name')
 
-            # Formata o nome da temporada (ex: "2025/2026" ou "2026")
-            if end and end != start:
-                s_name = f"{start}/{end}"
-                url_suffix = f"{start}-{end}"
-            else:
-                s_name = start
-                url_suffix = start
+        seasons_list.append({
+            'season_name': s_name,
+            'tournament_id': season_tid,
+            'stage_id': stage_id_season,
+            'is_current': is_current,
+            'winner': winner,
+            'url': s_url,
+            'path': s_url.replace("https://www.flashscore.com", "")
+        })
 
-            # Filtra apenas temporadas >= 2021
-            ano_ref = int(end) if (end and end.isdigit()) else (int(start) if start.isdigit() else 0)
-            if ano_ref < 2021:
-                continue
+    # Ordena temporadas da mais recente para a mais antiga
+    def sort_key(x):
+        m = re.search(r'\d{4}', x['season_name'])
+        return int(m.group(0)) if m else 0
 
-            # Extrai stage_id oficial
-            stages_obj = s.get('tournamentStages', {})
-            stage_req = stages_obj.get('requested', {})
-            stage_others = stages_obj.get('other', [])
-            stage_id_season = stage_req.get('id') if stage_req else (stage_others[0].get('id') if stage_others else None)
+    seasons_list.sort(key=sort_key, reverse=True)
 
-            # Define a URL canônica correta
-            if is_current:
-                s_url = root_base_url
-            else:
-                s_url = root_base_url.rstrip('/') + f"-{url_suffix}/"
-
-            # Campeão
-            winner = s.get('winners', [{}])[0].get('name') if s.get('winners') else None
-
-            seasons_list.append({
-                'season_name': s_name,
-                'tournament_id': season_tid,
-                'stage_id': stage_id_season,
-                'is_current': is_current,
-                'winner': winner,
-                'url': s_url,
-                'path': s_url.replace("https://www.flashscore.com", "")
-            })
-
-        # Ordena temporadas da mais recente para a mais antiga
-        def sort_key(x):
-            m = re.search(r'\d{4}', x['season_name'])
-            return int(m.group(0)) if m else 0
-
-        seasons_list.sort(key=sort_key, reverse=True)
-
-        league_copy = dict(league)
-        league_copy["total_seasons"] = len(seasons_list)
-        league_copy["seasons"] = seasons_list
-        return league_copy
-
-    except Exception:
-        league_copy = dict(league)
-        league_copy["total_seasons"] = 0
-        league_copy["seasons"] = []
-        return league_copy
+    league_copy = dict(league)
+    league_copy["total_seasons"] = len(seasons_list)
+    league_copy["seasons"] = seasons_list
+    return league_copy
 
 
 def carregar_paises_ligas() -> list[dict]:
@@ -228,29 +230,39 @@ def main():
             nome = res.get('league_name', 'Liga')
             pais = res.get('country_name', 'País')
             if n_seasons > 0:
-                print(f"[{i:4d}/{total_leagues}] ✓ [{pais}] {nome} ➔ {n_seasons} temporadas encontradas")
+                print(f"[{i:4d}/{total_leagues}] ✓ [{pais}] {nome} -> {n_seasons} temporadas")
             else:
-                print(f"[{i:4d}/{total_leagues}] ⚪ [{pais}] {nome} ➔ 0 temporadas")
+                print(f"[{i:4d}/{total_leagues}] ⚠️ [{pais}] {nome} -> Nenhuma temporada encontrada")
 
-    # Garante a ordem original
-    url_to_index = {l.get("url"): idx for idx, l in enumerate(leagues)}
-    resultado.sort(key=lambda x: url_to_index.get(x.get("url"), 999999))
+    # Ordena o resultado preservando a estrutura
+    def liga_sort_key(x):
+        c = x.get('country_name') or ''
+        s = x.get('fs_sort_order')
+        s_val = 999 if (s is None or not isinstance(s, (int, float))) else s
+        n = x.get('league_name') or ''
+        return (c, s_val, n)
+
+    resultado.sort(key=liga_sort_key)
+
+    # Salva JSON consolidado
+    payload = {
+        "metadata": {
+            "source": "Flashscore GraphQL API (pq_graphql)",
+            "total_leagues": len(resultado),
+            "total_seasons_collected": total_temporadas_coletadas,
+            "min_year": 2021
+        },
+        "leagues": resultado
+    }
 
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump({
-            "metadata": {
-                "source": "Flashscore GraphQL Seasons & Stages Extractor",
-                "total_leagues": len(resultado),
-                "total_seasons_collected": total_temporadas_coletadas
-            },
-            "leagues": resultado
-        }, f, ensure_ascii=False, indent=2)
+        json.dump(payload, f, indent=2, ensure_ascii=False)
 
     print("\n" + "=" * 80)
-    print(f"🎉 Processamento concluído com sucesso!")
-    print(f"✓ Total de Ligas: {len(resultado)}")
-    print(f"✓ Total de Temporadas Coletadas: {total_temporadas_coletadas}")
+    print(f"✅ Extração concluída com sucesso!")
+    print(f"📊 Total de ligas processadas: {len(resultado)}")
+    print(f"🏆 Total de temporadas coletadas: {total_temporadas_coletadas}")
     print(f"💾 Salvo em: {OUTPUT_FILE}")
     print("=" * 80)
 
