@@ -319,20 +319,7 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                 work_queue.put(mid)
                 
             save_lock = threading.Lock()
-            stop_saver = threading.Event()
-            
-            # Thread de Salvamento Assíncrono em Segundo Plano (Zero Bloqueio nos Workers)
-            def background_saver():
-                last_saved_count = len(existing_league['matches'])
-                while not stop_saver.wait(3.0):
-                    with save_lock:
-                        curr_count = len(existing_league['matches'])
-                        if curr_count > last_saved_count:
-                            save_country_data(filename, country_data)
-                            last_saved_count = curr_count
-                            
-            saver_thread = threading.Thread(target=background_saver, daemon=True)
-            saver_thread.start()
+            downloaded_matches = []
             
             def api_worker(w_idx):
                 w_proxy = proxy_list[w_idx % len(proxy_list)] if proxy_list else None
@@ -365,7 +352,7 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                             existing_league['scraped_matches'] = len(existing_league['matches'])
                             curr = len(existing_league['matches'])
                             
-                        print(f"  [{curr:3d}/{len(match_ids)}] ✓ [W{w_idx+1}] Match {m_id} ({elapsed:.2f}s) [OK💾]")
+                        print(f"  [{curr:3d}/{len(match_ids)}] ✓ [W{w_idx+1}] Match {m_id} ({elapsed:.2f}s) [OK]")
                     except Exception as e_w:
                         print(f"  ✗ [W{w_idx+1}] Erro no jogo {m_id}: {e_w}")
                     finally:
@@ -382,15 +369,9 @@ def scrape_fast_from_config(config_file="ligas_config.csv", proxy=None, workers=
                 
             for t in active_threads:
                 t.join()
-                
-            # Encerra o background saver e aguarda a finalização de qualquer escrita pendente
-            stop_saver.set()
-            if saver_thread.is_alive():
-                saver_thread.join(timeout=5)
 
-            # Salva o estado final consolidado com lock atômico
-            with save_lock:
-                save_country_data(filename, country_data)
+            # Salva o estado final consolidado de uma só vez (sem engasgo de I/O em disco)
+            save_country_data(filename, country_data)
         else:
             print(f"  ✅ Liga já completa ({len(match_ids)} jogos)")
             if os.path.exists(csv_filename):
