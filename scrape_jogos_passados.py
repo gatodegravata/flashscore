@@ -539,31 +539,73 @@ _STAGES_CACHE = None
 
 def get_stages_mapping():
     """
-    Carrega e armazena em cache o mapeamento de estágios direto de auxiliares/temporadas_ligas.json.
-    Retorna um dicionário { url_normalizada: [stage_type_ids] }
+    Carrega e armazena em cache o mapeamento de ligas_stages.csv direto do GitHub ou local.
+    Retorna um dicionário { url_normalizada: [stage_ids] }
     """
     global _STAGES_CACHE
     if _STAGES_CACHE is not None:
         return _STAGES_CACHE
     
     _STAGES_CACHE = {}
-    json_path = "auxiliares/temporadas_ligas.json"
-    if os.path.exists(json_path):
+    import urllib.request
+    import csv
+    import io
+    import ast
+    import re
+    
+    # 1. Tenta carregar arquivo local se existir
+    if os.path.exists("ligas_stages.csv"):
         try:
-            with open(json_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            for l in data.get('leagues', []):
-                for s in l.get('seasons', []):
-                    u = s.get('url', '').rstrip('/') + '/'
-                    st_types = s.get('stage_types', [])
-                    if not st_types and s.get('stage_type_id'):
-                        st_types = [s.get('stage_type_id')]
-                    if u:
-                        _STAGES_CACHE[u] = [str(st) for st in st_types]
-                        _STAGES_CACHE[u.rstrip('/') + '/results/'] = [str(st) for st in st_types]
+            with open("ligas_stages.csv", "r", encoding="utf-8", errors="ignore") as f:
+                reader = csv.DictReader(f, delimiter=';')
+                for row in reader:
+                    raw_url = row.get('url', '').strip()
+                    if not raw_url:
+                        continue
+                    norm_url = raw_url.rstrip('/') + '/'
+                    stages_str = row.get('feed_stage_lista', '').strip()
+                    if stages_str:
+                        try:
+                            stages = ast.literal_eval(stages_str)
+                            if isinstance(stages, list):
+                                _STAGES_CACHE[norm_url] = [str(s).strip() for s in stages if str(s).strip()]
+                            else:
+                                _STAGES_CACHE[norm_url] = []
+                        except Exception:
+                            _STAGES_CACHE[norm_url] = re.findall(r"'(\d+)'", stages_str)
+                    else:
+                        _STAGES_CACHE[norm_url] = []
+            if _STAGES_CACHE:
+                return _STAGES_CACHE
         except Exception:
             pass
-            
+
+    # 2. Se não tiver local ou falhar, baixa do GitHub
+    url = "https://raw.githubusercontent.com/gatodegravata/flashscore/refs/heads/main/ligas_stages.csv"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        content = urllib.request.urlopen(req, timeout=10).read().decode('utf-8')
+        reader = csv.DictReader(io.StringIO(content), delimiter=';')
+        for row in reader:
+            raw_url = row.get('url', '').strip()
+            if not raw_url:
+                continue
+            norm_url = raw_url.rstrip('/') + '/'
+            stages_str = row.get('feed_stage_lista', '').strip()
+            if stages_str:
+                try:
+                    stages = ast.literal_eval(stages_str)
+                    if isinstance(stages, list):
+                        _STAGES_CACHE[norm_url] = [str(s).strip() for s in stages if str(s).strip()]
+                    else:
+                        _STAGES_CACHE[norm_url] = []
+                except Exception:
+                    _STAGES_CACHE[norm_url] = re.findall(r"'(\d+)'", stages_str)
+            else:
+                _STAGES_CACHE[norm_url] = []
+    except Exception as e:
+        print(f"  ⚠️ Aviso: Não foi possível carregar ligas_stages.csv do GitHub: {e}")
+        
     return _STAGES_CACHE
 
 
@@ -789,12 +831,16 @@ def get_match_ids_from_league(scraper, league_url):
         stages_map = get_stages_mapping()
         mapped_stages = stages_map.get(norm_league_url, None)
         
-        if mapped_stages is not None and len(mapped_stages) > 0:
-            print(f"  🎯 Stage Type(s) mapeados no GraphQL: {mapped_stages}")
-            flags_to_check = [int(s) for s in mapped_stages if str(s).isdigit()] + [156, 12, 11, 0, 1, 2, 3]
-            flags_to_check = list(dict.fromkeys(flags_to_check))
+        if mapped_stages is not None:
+            if len(mapped_stages) > 0:
+                print(f"  🎯 Stage ID(s) mapeados no CSV oficial: {mapped_stages}")
+                flags_to_check = [int(s) for s in mapped_stages if str(s).isdigit()]
+            else:
+                print(f"  🎯 Liga sem continuidade (Copa/Torneio curto): usando jogos da tela inicial + feed base")
+                flags_to_check = []
         else:
-            flags_to_check = [156, 12, 11, 0, 1, 2, 3] + list(range(170, 207))
+            # Fallback caso a URL ainda não esteja no ligas_stages.csv
+            flags_to_check = [156, 12, 11, 0] + list(range(170, 207)) + list(range(220, 228)) + list(range(245, 255))
             flags_to_check = list(dict.fromkeys(flags_to_check))
         
         # Recupera as chaves principais
