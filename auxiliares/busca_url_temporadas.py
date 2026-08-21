@@ -122,11 +122,36 @@ def obter_temporadas_da_liga(league: dict) -> dict:
         if ano_ref < 2021:
             continue
 
-        # Extrai stage_id oficial
+        # Extrai todos os estágios detalhados (Main, Play Offs, Play Out, etc.)
         stages_obj = s.get('tournamentStages', {})
-        stage_req = stages_obj.get('requested', {})
-        stage_others = stages_obj.get('other', [])
+        stage_req = stages_obj.get('requested') or {}
+        stage_others = stages_obj.get('other', []) or []
+        
+        all_stage_nodes = ([stage_req] if stage_req else []) + stage_others
+        stages_detail = []
+        stage_type_ids = []
+        
+        for st in all_stage_nodes:
+            if not st:
+                continue
+            st_id = st.get('id')
+            st_type = st.get('tournamentStageTypeId')
+            st_sort = st.get('sortKey')
+            st_names = st.get('leagueNames', {}) or {}
+            st_name = st_names.get('stage') or ("Main" if st_type == 2 else "Stage")
+            
+            if st_type is not None:
+                stage_type_ids.append(st_type)
+                
+            stages_detail.append({
+                'id': st_id,
+                'type_id': st_type,
+                'sort_key': st_sort,
+                'name': st_name
+            })
+            
         stage_id_season = stage_req.get('id') if stage_req else (stage_others[0].get('id') if stage_others else None)
+        primary_stage_type = stage_req.get('tournamentStageTypeId') if stage_req else (stage_others[0].get('tournamentStageTypeId') if stage_others else None)
 
         # Define a URL canônica correta
         if is_current:
@@ -144,6 +169,9 @@ def obter_temporadas_da_liga(league: dict) -> dict:
             'season_name': s_name,
             'tournament_id': season_tid,
             'stage_id': stage_id_season,
+            'stage_type_id': primary_stage_type,
+            'stage_types': list(dict.fromkeys(stage_type_ids)),
+            'stages': stages_detail,
             'is_current': is_current,
             'winner': winner,
             'url': s_url,
