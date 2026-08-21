@@ -95,8 +95,14 @@ class FlashScoreAPIScraper:
         }
         
         try:
-            resp = self.session.get(url, headers=self.headers_feed, timeout=3.0)
-            if resp.status_code != 200 or not resp.text:
+            resp = self.session.get(url, headers=self.headers_feed, timeout=1.5)
+            if resp.status_code == 429:
+                print(f"\n🚨 [RATE LIMIT] Status 429 atingido no jogo {match_id}! Reduza os workers ou use proxies!")
+                return data
+            elif resp.status_code == 403:
+                print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 no jogo {match_id}! Use proxies para continuar.")
+                return data
+            elif resp.status_code != 200 or not resp.text:
                 return data
             
             raw_text = resp.text
@@ -132,7 +138,7 @@ class FlashScoreAPIScraper:
             # Consulta o feed de cabeçalho dc_1 para obter notas de jogo/mata-mata (tag DM)
             try:
                 url_dc = f"{self.feed_base_url}/dc_1_{match_id}"
-                resp_dc = self.session.get(url_dc, headers=self.headers_feed, timeout=5)
+                resp_dc = self.session.get(url_dc, headers=self.headers_feed, timeout=1.2)
                 if resp_dc.status_code == 200 and resp_dc.text:
                     m_dm = re.search(r'DM[\xac\xf7÷]([^\xac\xf7÷~]+)', resp_dc.text)
                     if m_dm:
@@ -181,27 +187,42 @@ class FlashScoreAPIScraper:
                     
                 if target_dict is None:
                     continue
+            if resp.status_code == 429:
+                print(f"\n🚨 [RATE LIMIT] Status 429 em estatísticas do jogo {match_id}!")
+                return stats_data
+            elif resp.status_code == 403:
+                print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 em estatísticas do jogo {match_id}!")
+                return stats_data
+            elif resp.status_code != 200 or not resp.text:
+                return stats_data
+                
+            raw_text = resp.text
+            sections = raw_text.split('~')
+            current_stage = "Statistics_FT"
+            
+            for sec in sections:
+                if 'SE÷1st Half' in sec or 'SE\xf71st Half' in sec or 'SE\xac1st Half' in sec:
+                    current_stage = "Statistics_HT"
+                elif 'SE÷2nd Half' in sec or 'SE\xf72nd Half' in sec or 'SE\xac2nd Half' in sec:
+                    current_stage = "Statistics_2T"
+                elif 'SE÷Match' in sec or 'SE\xf7Match' in sec or 'SE\xacMatch' in sec:
+                    current_stage = "Statistics_FT"
+                
+                # Procura métricas: SG (nome da estatística), SH (valor Home), SI (valor Away)
+                m_sg = re.search(r'SG[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+                m_sh = re.search(r'SH[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+                m_si = re.search(r'SI[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+                
+                if m_sg and m_sh and m_si:
+                    stat_name = m_sg.group(1).strip()
+                    val_h = self._parse_stat_value(m_sh.group(1).strip())
+                    val_a = self._parse_stat_value(m_si.group(1).strip())
                     
-                items = sec.split('~')
-                for item in items:
-                    if 'SG' in item and 'SH' in item and 'SI' in item:
-                        name_m = re.search(r'SG[\xac\xf7]([^\xac\xf7]+)', item)
-                        home_m = re.search(r'SH[\xac\xf7]([^\xac\xf7]+)', item)
-                        away_m = re.search(r'SI[\xac\xf7]([^\xac\xf7]+)', item)
-                        
-                        if name_m and home_m and away_m:
-                            metric_name = name_m.group(1).strip()
-                            home_val = home_m.group(1).strip()
-                            away_val = away_m.group(1).strip()
-                            
-                            h_num = self._parse_stat_value(home_val)
-                            a_num = self._parse_stat_value(away_val)
-                            
-                            target_dict[metric_name] = {
-                                "Home": h_num,
-                                "Away": a_num
-                            }
-                            
+                    stats_data[current_stage][stat_name] = {
+                        "Home": val_h,
+                        "Away": val_a
+                    }
+                    
         except Exception:
             pass
             
@@ -267,8 +288,14 @@ class FlashScoreAPIScraper:
             odds_result["Odds_OU_2T"][f"OU_{line}"] = []
             
         try:
-            resp = self.session.get(url, headers=self.headers_graphql, timeout=3.0)
-            if resp.status_code != 200:
+            resp = self.session.get(url, headers=self.headers_graphql, timeout=1.5)
+            if resp.status_code == 429:
+                print(f"\n🚨 [RATE LIMIT] Status 429 no GraphQL de Odds do jogo {match_id}!")
+                return odds_result
+            elif resp.status_code == 403:
+                print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 no GraphQL de Odds do jogo {match_id}!")
+                return odds_result
+            elif resp.status_code != 200:
                 return odds_result
                 
             json_data = resp.json()
