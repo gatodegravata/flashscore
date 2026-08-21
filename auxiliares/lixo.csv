@@ -1,445 +1,119 @@
 baixar;pais;liga_temporada;temporada;url
-S;AUSTRIA;AUSTRIA 3;2026/2027;https://www.flashscore.com/football/austria/regionalliga-north/results/
-S;AUSTRIA;AUSTRIA 3;2026/2027;https://www.flashscore.com/football/austria/regionalliga-south/results/
-S;AUSTRIA;AUSTRIA 1;2026/2027;https://www.flashscore.com/football/austria/bundesliga/results/
-S;AUSTRIA;AUSTRIA 2;2026/2027;https://www.flashscore.com/football/austria/2-liga/results/
-S;AUSTRIA;AUSTRIA 3;2026/2027;https://www.flashscore.com/football/austria/regionalliga-east/results/
-S;AUSTRIA;AUSTRIA 3;2026/2027;https://www.flashscore.com/football/austria/regionalliga-west/results/
-S;AUSTRIA;AUSTRIA 4;2026/2027;https://www.flashscore.com/football/austria/burgenland/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 2;2026/2027;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-fbih/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 3;2026/2027;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-rs/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 1;2026/2027;https://www.flashscore.com/football/bosnia-and-herzegovina/wwin-liga-bih/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 2;2026/2027;https://www.flashscore.com/football/northern-ireland/nifl-championship/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 1;2026/2027;https://www.flashscore.com/football/northern-ireland/nifl-premiership/results/
-S;SLOVAKIA;SLOVAKIA 3;2026/2027;https://www.flashscore.com/football/slovakia/3-liga-central/results/
-S;SLOVAKIA;SLOVAKIA 3;2026/2027;https://www.flashscore.com/football/slovakia/3-liga-east/results/
-S;SLOVAKIA;SLOVAKIA 2;2026/2027;https://www.flashscore.com/football/slovakia/2-liga/results/
-S;SLOVAKIA;SLOVAKIA 1;2026/2027;https://www.flashscore.com/football/slovakia/nike-liga/results/
-S;SLOVAKIA;SLOVAKIA 3;2026/2027;https://www.flashscore.com/football/slovakia/3-liga-west/results/
-S;SLOVAKIA;SLOVAKIA 4;2026/2027;https://www.flashscore.com/football/slovakia/4-liga-bratislava/results/
-S;SLOVENIA;SLOVENIA 1;2026/2027;https://www.flashscore.com/football/slovenia/prva-liga/results/
-S;SLOVENIA;SLOVENIA 2;2026/2027;https://www.flashscore.com/football/slovenia/2-snl/results/
-S;SLOVENIA;SLOVENIA 3;2026/2027;https://www.flashscore.com/football/slovenia/3-snl-west/results/
-S;SLOVENIA;SLOVENIA 3;2026/2027;https://www.flashscore.com/football/slovenia/3-snl-east/results/
-S;WALES;WALES 2;2026/2027;https://www.flashscore.com/football/wales/cymru-north/results/
-S;WALES;WALES 2;2026/2027;https://www.flashscore.com/football/wales/cymru-south/results/
-S;WALES;WALES 1;2026/2027;https://www.flashscore.com/football/wales/cymru-premier/results/
-S;ESTONIA;ESTONIA 1;2026;https://www.flashscore.com/football/estonia/meistriliiga/results/
-S;ESTONIA;ESTONIA 2;2026;https://www.flashscore.com/football/estonia/esiliiga/results/
-S;ESTONIA;ESTONIA 3;2026;https://www.flashscore.com/football/estonia/esiliiga-b/results/
+S;ALGERIA;ALGERIA 1;2026/2027;https://www.flashscore.com/football/algeria/ligue-1/results/
+S;ALGERIA;ALGERIA 1;2025/2026;https://www.flashscore.com/football/algeria/ligue-1-2025-2026/results/
+S;ALGERIA;ALGERIA 1;2024/2025;https://www.flashscore.com/football/algeria/ligue-1-2024-2025/results/
+S;ALGERIA;ALGERIA 1;2023/2024;https://www.flashscore.com/football/algeria/ligue-1-2023-2024/results/
+S;ALGERIA;ALGERIA 1;2022/2023;https://www.flashscore.com/football/algeria/ligue-1-2022-2023/results/
+S;ALGERIA;ALGERIA 1;2021/2022;https://www.flashscore.com/football/algeria/ligue-1-2021-2022/results/
+S;ALGERIA;ALGERIA 2;2026/2027;https://www.flashscore.com/football/algeria/ligue-2/results/
+S;ALGERIA;ALGERIA 2;2025/2026;https://www.flashscore.com/football/algeria/ligue-2-2025-2026/results/
+S;ALGERIA;ALGERIA 2;2024/2025;https://www.flashscore.com/football/algeria/ligue-2-2024-2025/results/
+S;ALGERIA;ALGERIA 2;2023/2024;https://www.flashscore.com/football/algeria/ligue-2-2023-2024/results/
+S;ALGERIA;ALGERIA 2;2022/2023;https://www.flashscore.com/football/algeria/ligue-2-2022-2023/results/
+S;ALGERIA;ALGERIA 2;2021/2022;https://www.flashscore.com/football/algeria/ligue-2-2021-2022/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 1;2026/2027;https://www.flashscore.com/football/czech-republic/chance-liga/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 1;2025/2026;https://www.flashscore.com/football/czech-republic/chance-liga-2025-2026/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 1;2024/2025;https://www.flashscore.com/football/czech-republic/chance-liga-2024-2025/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 1;2023/2024;https://www.flashscore.com/football/czech-republic/chance-liga-2023-2024/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 1;2022/2023;https://www.flashscore.com/football/czech-republic/chance-liga-2022-2023/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 1;2021/2022;https://www.flashscore.com/football/czech-republic/chance-liga-2021-2022/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 2;2026/2027;https://www.flashscore.com/football/czech-republic/chnl/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 2;2025/2026;https://www.flashscore.com/football/czech-republic/chnl-2025-2026/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 2;2024/2025;https://www.flashscore.com/football/czech-republic/chnl-2024-2025/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 2;2023/2024;https://www.flashscore.com/football/czech-republic/chnl-2023-2024/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 2;2022/2023;https://www.flashscore.com/football/czech-republic/chnl-2022-2023/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 2;2021/2022;https://www.flashscore.com/football/czech-republic/chnl-2021-2022/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2026/2027;https://www.flashscore.com/football/czech-republic/3-cfl-group-a/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2025/2026;https://www.flashscore.com/football/czech-republic/3-cfl-group-a-2025-2026/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2024/2025;https://www.flashscore.com/football/czech-republic/3-cfl-group-a-2024-2025/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2023/2024;https://www.flashscore.com/football/czech-republic/3-cfl-group-a-2023-2024/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2022/2023;https://www.flashscore.com/football/czech-republic/3-cfl-group-a-2022-2023/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2021/2022;https://www.flashscore.com/football/czech-republic/3-cfl-group-a-2021-2022/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2026/2027;https://www.flashscore.com/football/czech-republic/3-cfl-play-offs-2026-2027/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2025/2026;https://www.flashscore.com/football/czech-republic/3-cfl-play-offs/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2024/2025;https://www.flashscore.com/football/czech-republic/3-cfl-play-offs-2024-2025/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2023/2024;https://www.flashscore.com/football/czech-republic/3-cfl-play-offs-2023-2024/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2022/2023;https://www.flashscore.com/football/czech-republic/3-cfl-play-offs-2022-2023/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2021/2022;https://www.flashscore.com/football/czech-republic/3-cfl-play-offs-2021-2022/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2026/2027;https://www.flashscore.com/football/czech-republic/3-cfl-group-b/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2025/2026;https://www.flashscore.com/football/czech-republic/3-cfl-group-b-2025-2026/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2024/2025;https://www.flashscore.com/football/czech-republic/3-cfl-group-b-2024-2025/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2023/2024;https://www.flashscore.com/football/czech-republic/3-cfl-group-b-2023-2024/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2022/2023;https://www.flashscore.com/football/czech-republic/3-cfl-group-b-2022-2023/results/
+S;CZECH REPUBLIC;CZECH REPUBLIC 3;2021/2022;https://www.flashscore.com/football/czech-republic/3-cfl-group-b-2021-2022/results/
+S;EGYPT;EGYPT 2;2026/2027;https://www.flashscore.com/football/egypt/division-2-a/results/
+S;EGYPT;EGYPT 2;2025/2026;https://www.flashscore.com/football/egypt/division-2-a-2025-2026/results/
+S;EGYPT;EGYPT 2;2024/2025;https://www.flashscore.com/football/egypt/division-2-a-2024-2025/results/
+S;EGYPT;EGYPT 2;2023/2024;https://www.flashscore.com/football/egypt/division-2-a-2023-2024/results/
+S;EGYPT;EGYPT 1;2026/2027;https://www.flashscore.com/football/egypt/premier-league-2026-2027/results/
+S;EGYPT;EGYPT 1;2025/2026;https://www.flashscore.com/football/egypt/premier-league-2025-2026/results/
+S;EGYPT;EGYPT 1;2024/2025;https://www.flashscore.com/football/egypt/premier-league-2024-2025/results/
+S;EGYPT;EGYPT 1;2023/2024;https://www.flashscore.com/football/egypt/premier-league-2023-2024/results/
+S;EGYPT;EGYPT 1;2022/2023;https://www.flashscore.com/football/egypt/premier-league-2022-2023/results/
+S;EGYPT;EGYPT 1;2021/2022;https://www.flashscore.com/football/egypt/premier-league-2021-2022/results/
 S;IRELAND;IRELAND 3;2026;https://www.flashscore.com/football/ireland/national-league/results/
-S;IRELAND;IRELAND 1;2026;https://www.flashscore.com/football/ireland/premier-division/results/
-S;IRELAND;IRELAND 2;2026;https://www.flashscore.com/football/ireland/division-1/results/
-S;NORWAY;NORWAY 1;2026;https://www.flashscore.com/football/norway/eliteserien/results/
-S;NORWAY;NORWAY 2;2026;https://www.flashscore.com/football/norway/obos-ligaen/results/
-S;NORWAY;NORWAY 3;2026;https://www.flashscore.com/football/norway/division-2-group-1/results/
-S;NORWAY;NORWAY 4;2026;https://www.flashscore.com/football/norway/division-3-group-4/results/
-S;NORWAY;NORWAY 4;2026;https://www.flashscore.com/football/norway/division-3-group-1/results/
-S;NORWAY;NORWAY 3;2026;https://www.flashscore.com/football/norway/division-2-group-2/results/
-S;NORWAY;NORWAY 4;2026;https://www.flashscore.com/football/norway/division-3-group-2/results/
-S;NORWAY;NORWAY 4;2026;https://www.flashscore.com/football/norway/division-3-group-5/results/
-S;NORWAY;NORWAY 4;2026;https://www.flashscore.com/football/norway/division-3-group-3/results/
-S;NORWAY;NORWAY 4;2026;https://www.flashscore.com/football/norway/division-3-group-6/results/
-S;SWEDEN;SWEDEN 1;2026;https://www.flashscore.com/football/sweden/allsvenskan/results/
-S;SWEDEN;SWEDEN 3;2026;https://www.flashscore.com/football/sweden/division-1-norra/results/
-S;SWEDEN;SWEDEN 2;2026;https://www.flashscore.com/football/sweden/superettan/results/
-S;SWEDEN;SWEDEN 3;2026;https://www.flashscore.com/football/sweden/division-1-sodra/results/
-S;AUSTRIA;AUSTRIA 1;2025/2026;https://www.flashscore.com/football/austria/bundesliga-2025-2026/results/
-S;AUSTRIA;AUSTRIA 2;2025/2026;https://www.flashscore.com/football/austria/2-liga-2025-2026/results/
-S;AUSTRIA;AUSTRIA 3;2025/2026;https://www.flashscore.com/football/austria/regionalliga-east-2025-2026/results/
-S;AUSTRIA;AUSTRIA 3;2025/2026;https://www.flashscore.com/football/austria/regionalliga-west-2025-2026/results/
-S;AUSTRIA;AUSTRIA 4;2025/2026;https://www.flashscore.com/football/austria/burgenland-2025-2026/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 2;2025/2026;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-fbih-2025-2026/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 3;2025/2026;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-rs-2025-2026/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 1;2025/2026;https://www.flashscore.com/football/bosnia-and-herzegovina/wwin-liga-bih-2025-2026/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 2;2025/2026;https://www.flashscore.com/football/northern-ireland/nifl-championship-2025-2026/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 1;2025/2026;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 3;2025/2026;https://www.flashscore.com/football/slovakia/3-liga-central-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 3;2025/2026;https://www.flashscore.com/football/slovakia/3-liga-promotion-play-offs-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 3;2025/2026;https://www.flashscore.com/football/slovakia/3-liga-east-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 2;2025/2026;https://www.flashscore.com/football/slovakia/2-liga-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 1;2025/2026;https://www.flashscore.com/football/slovakia/nike-liga-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 3;2025/2026;https://www.flashscore.com/football/slovakia/3-liga-west-2025-2026/results/
-S;SLOVAKIA;SLOVAKIA 4;2025/2026;https://www.flashscore.com/football/slovakia/4-liga-bratislava-2025-2026/results/
-S;SLOVENIA;SLOVENIA 1;2025/2026;https://www.flashscore.com/football/slovenia/prva-liga-2025-2026/results/
-S;SLOVENIA;SLOVENIA 2;2025/2026;https://www.flashscore.com/football/slovenia/2-snl-2025-2026/results/
-S;SLOVENIA;SLOVENIA 3;2025/2026;https://www.flashscore.com/football/slovenia/3-snl-west-2025-2026/results/
-S;SLOVENIA;SLOVENIA 3;2025/2026;https://www.flashscore.com/football/slovenia/3-snl-east-2025-2026/results/
-S;WALES;WALES 2;2025/2026;https://www.flashscore.com/football/wales/cymru-north-2025-2026/results/
-S;WALES;WALES 2;2025/2026;https://www.flashscore.com/football/wales/cymru-south-2025-2026/results/
-S;WALES;WALES 1;2025/2026;https://www.flashscore.com/football/wales/cymru-premier-2025-2026/results/
-S;ESTONIA;ESTONIA 1;2025;https://www.flashscore.com/football/estonia/meistriliiga-2025/results/
-S;ESTONIA;ESTONIA 2;2025;https://www.flashscore.com/football/estonia/esiliiga-2025/results/
-S;ESTONIA;ESTONIA 3;2025;https://www.flashscore.com/football/estonia/esiliiga-b-2025/results/
+S;IRELAND;IRELAND 1;2027;https://www.flashscore.com/football/ireland/premier-division-2027/results/
+S;IRELAND;IRELAND 1;2026;https://www.flashscore.com/football/ireland/premier-division-2026/results/
 S;IRELAND;IRELAND 1;2025;https://www.flashscore.com/football/ireland/premier-division-2025/results/
-S;IRELAND;IRELAND 2;2025;https://www.flashscore.com/football/ireland/division-1-2025/results/
-S;NORWAY;NORWAY 1;2025;https://www.flashscore.com/football/norway/eliteserien-2025/results/
-S;NORWAY;NORWAY 2;2025;https://www.flashscore.com/football/norway/obos-ligaen-2025/results/
-S;NORWAY;NORWAY 3;2025;https://www.flashscore.com/football/norway/division-2-group-1-2025/results/
-S;NORWAY;NORWAY 4;2025;https://www.flashscore.com/football/norway/division-3-group-4-2025/results/
-S;NORWAY;NORWAY 4;2025;https://www.flashscore.com/football/norway/division-3-group-1-2025/results/
-S;NORWAY;NORWAY 3;2025;https://www.flashscore.com/football/norway/division-2-group-2-2025/results/
-S;NORWAY;NORWAY 4;2025;https://www.flashscore.com/football/norway/division-3-group-2-2025/results/
-S;NORWAY;NORWAY 4;2025;https://www.flashscore.com/football/norway/division-3-group-5-2025/results/
-S;NORWAY;NORWAY 4;2025;https://www.flashscore.com/football/norway/division-3-group-3-2025/results/
-S;NORWAY;NORWAY 4;2025;https://www.flashscore.com/football/norway/division-3-group-6-2025/results/
-S;SWEDEN;SWEDEN 1;2025;https://www.flashscore.com/football/sweden/allsvenskan-2025/results/
-S;SWEDEN;SWEDEN 3;2025;https://www.flashscore.com/football/sweden/division-1-norra-2025/results/
-S;SWEDEN;SWEDEN 2;2025;https://www.flashscore.com/football/sweden/superettan-2025/results/
-S;SWEDEN;SWEDEN 3;2025;https://www.flashscore.com/football/sweden/division-1-sodra-2025/results/
-S;AUSTRIA;AUSTRIA 1;2024/2025;https://www.flashscore.com/football/austria/bundesliga-2024-2025/results/
-S;AUSTRIA;AUSTRIA 2;2024/2025;https://www.flashscore.com/football/austria/2-liga-2024-2025/results/
-S;AUSTRIA;AUSTRIA 3;2024/2025;https://www.flashscore.com/football/austria/regionalliga-east-2024-2025/results/
-S;AUSTRIA;AUSTRIA 3;2024/2025;https://www.flashscore.com/football/austria/regionalliga-west-2024-2025/results/
-S;AUSTRIA;AUSTRIA 4;2024/2025;https://www.flashscore.com/football/austria/burgenland-2024-2025/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 2;2024/2025;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-fbih-2024-2025/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 3;2024/2025;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-rs-2024-2025/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 1;2024/2025;https://www.flashscore.com/football/bosnia-and-herzegovina/wwin-liga-bih-2024-2025/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 2;2024/2025;https://www.flashscore.com/football/northern-ireland/nifl-championship-2024-2025/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 1;2024/2025;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2024-2025/results/
-S;SLOVAKIA;SLOVAKIA 3;2024/2025;https://www.flashscore.com/football/slovakia/3-liga-promotion-play-offs/results/
-S;SLOVAKIA;SLOVAKIA 3;2024/2025;https://www.flashscore.com/football/slovakia/3-liga-east-2024-2025/results/
-S;SLOVAKIA;SLOVAKIA 2;2024/2025;https://www.flashscore.com/football/slovakia/2-liga-2024-2025/results/
-S;SLOVAKIA;SLOVAKIA 1;2024/2025;https://www.flashscore.com/football/slovakia/nike-liga-2024-2025/results/
-S;SLOVAKIA;SLOVAKIA 3;2024/2025;https://www.flashscore.com/football/slovakia/3-liga-west-2024-2025/results/
-S;SLOVAKIA;SLOVAKIA 4;2024/2025;https://www.flashscore.com/football/slovakia/4-liga-bratislava-2024-2025/results/
-S;SLOVENIA;SLOVENIA 1;2024/2025;https://www.flashscore.com/football/slovenia/prva-liga-2024-2025/results/
-S;SLOVENIA;SLOVENIA 2;2024/2025;https://www.flashscore.com/football/slovenia/2-snl-2024-2025/results/
-S;SLOVENIA;SLOVENIA 3;2024/2025;https://www.flashscore.com/football/slovenia/3-snl-west-2024-2025/results/
-S;SLOVENIA;SLOVENIA 3;2024/2025;https://www.flashscore.com/football/slovenia/3-snl-east-2024-2025/results/
-S;WALES;WALES 2;2024/2025;https://www.flashscore.com/football/wales/cymru-north-2024-2025/results/
-S;WALES;WALES 2;2024/2025;https://www.flashscore.com/football/wales/cymru-south-2024-2025/results/
-S;WALES;WALES 1;2024/2025;https://www.flashscore.com/football/wales/cymru-premier-2024-2025/results/
-S;ESTONIA;ESTONIA 1;2024;https://www.flashscore.com/football/estonia/meistriliiga-2024/results/
-S;ESTONIA;ESTONIA 2;2024;https://www.flashscore.com/football/estonia/esiliiga-2024/results/
-S;ESTONIA;ESTONIA 3;2024;https://www.flashscore.com/football/estonia/esiliiga-b-2024/results/
 S;IRELAND;IRELAND 1;2024;https://www.flashscore.com/football/ireland/premier-division-2024/results/
-S;IRELAND;IRELAND 2;2024;https://www.flashscore.com/football/ireland/division-1-2024/results/
-S;NORWAY;NORWAY 1;2024;https://www.flashscore.com/football/norway/eliteserien-2024/results/
-S;NORWAY;NORWAY 2;2024;https://www.flashscore.com/football/norway/obos-ligaen-2024/results/
-S;NORWAY;NORWAY 3;2024;https://www.flashscore.com/football/norway/division-2-group-1-2024/results/
-S;NORWAY;NORWAY 4;2024;https://www.flashscore.com/football/norway/division-3-group-4-2024/results/
-S;NORWAY;NORWAY 4;2024;https://www.flashscore.com/football/norway/division-3-group-1-2024/results/
-S;NORWAY;NORWAY 3;2024;https://www.flashscore.com/football/norway/division-2-group-2-2024/results/
-S;NORWAY;NORWAY 4;2024;https://www.flashscore.com/football/norway/division-3-group-2-2024/results/
-S;NORWAY;NORWAY 4;2024;https://www.flashscore.com/football/norway/division-3-group-5-2024/results/
-S;NORWAY;NORWAY 4;2024;https://www.flashscore.com/football/norway/division-3-group-3-2024/results/
-S;NORWAY;NORWAY 4;2024;https://www.flashscore.com/football/norway/division-3-group-6-2024/results/
-S;SWEDEN;SWEDEN 1;2024;https://www.flashscore.com/football/sweden/allsvenskan-2024/results/
-S;SWEDEN;SWEDEN 3;2024;https://www.flashscore.com/football/sweden/division-1-norra-2024/results/
-S;SWEDEN;SWEDEN 2;2024;https://www.flashscore.com/football/sweden/superettan-2024/results/
-S;SWEDEN;SWEDEN 3;2024;https://www.flashscore.com/football/sweden/division-1-sodra-2024/results/
-S;AUSTRIA;AUSTRIA 1;2023/2024;https://www.flashscore.com/football/austria/bundesliga-2023-2024/results/
-S;AUSTRIA;AUSTRIA 2;2023/2024;https://www.flashscore.com/football/austria/2-liga-2023-2024/results/
-S;AUSTRIA;AUSTRIA 3;2023/2024;https://www.flashscore.com/football/austria/regionalliga-east-2023-2024/results/
-S;AUSTRIA;AUSTRIA 3;2023/2024;https://www.flashscore.com/football/austria/regionalliga-west-2023-2024/results/
-S;AUSTRIA;AUSTRIA 4;2023/2024;https://www.flashscore.com/football/austria/burgenland-2023-2024/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 2;2023/2024;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-fbih-2023-2024/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 3;2023/2024;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-rs-2023-2024/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 1;2023/2024;https://www.flashscore.com/football/bosnia-and-herzegovina/wwin-liga-bih-2023-2024/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 2;2023/2024;https://www.flashscore.com/football/northern-ireland/nifl-championship-2023-2024/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 1;2023/2024;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2023-2024/results/
-S;SLOVAKIA;SLOVAKIA 3;2023/2024;https://www.flashscore.com/football/slovakia/3-liga-east-2023-2024/results/
-S;SLOVAKIA;SLOVAKIA 2;2023/2024;https://www.flashscore.com/football/slovakia/2-liga-2023-2024/results/
-S;SLOVAKIA;SLOVAKIA 1;2023/2024;https://www.flashscore.com/football/slovakia/nike-liga-2023-2024/results/
-S;SLOVAKIA;SLOVAKIA 3;2023/2024;https://www.flashscore.com/football/slovakia/3-liga-west-2023-2024/results/
-S;SLOVAKIA;SLOVAKIA 4;2023/2024;https://www.flashscore.com/football/slovakia/4-liga-bratislava-2023-2024/results/
-S;SLOVENIA;SLOVENIA 1;2023/2024;https://www.flashscore.com/football/slovenia/prva-liga-2023-2024/results/
-S;SLOVENIA;SLOVENIA 2;2023/2024;https://www.flashscore.com/football/slovenia/2-snl-2023-2024/results/
-S;SLOVENIA;SLOVENIA 3;2023/2024;https://www.flashscore.com/football/slovenia/3-snl-west-2023-2024/results/
-S;SLOVENIA;SLOVENIA 3;2023/2024;https://www.flashscore.com/football/slovenia/3-snl-east-2023-2024/results/
-S;WALES;WALES 2;2023/2024;https://www.flashscore.com/football/wales/cymru-north-2023-2024/results/
-S;WALES;WALES 2;2023/2024;https://www.flashscore.com/football/wales/cymru-south-2023-2024/results/
-S;WALES;WALES 1;2023/2024;https://www.flashscore.com/football/wales/cymru-premier-2023-2024/results/
-S;ESTONIA;ESTONIA 1;2023;https://www.flashscore.com/football/estonia/meistriliiga-2023/results/
-S;ESTONIA;ESTONIA 2;2023;https://www.flashscore.com/football/estonia/esiliiga-2023/results/
-S;ESTONIA;ESTONIA 3;2023;https://www.flashscore.com/football/estonia/esiliiga-b-2023/results/
 S;IRELAND;IRELAND 1;2023;https://www.flashscore.com/football/ireland/premier-division-2023/results/
-S;IRELAND;IRELAND 2;2023;https://www.flashscore.com/football/ireland/division-1-2023/results/
-S;NORWAY;NORWAY 1;2023;https://www.flashscore.com/football/norway/eliteserien-2023/results/
-S;NORWAY;NORWAY 2;2023;https://www.flashscore.com/football/norway/obos-ligaen-2023/results/
-S;NORWAY;NORWAY 3;2023;https://www.flashscore.com/football/norway/division-2-group-1-2023/results/
-S;NORWAY;NORWAY 4;2023;https://www.flashscore.com/football/norway/division-3-group-4-2023/results/
-S;NORWAY;NORWAY 4;2023;https://www.flashscore.com/football/norway/division-3-group-1-2023/results/
-S;NORWAY;NORWAY 3;2023;https://www.flashscore.com/football/norway/division-2-group-2-2023/results/
-S;NORWAY;NORWAY 4;2023;https://www.flashscore.com/football/norway/division-3-group-2-2023/results/
-S;NORWAY;NORWAY 4;2023;https://www.flashscore.com/football/norway/division-3-group-5-2023/results/
-S;NORWAY;NORWAY 4;2023;https://www.flashscore.com/football/norway/division-3-group-3-2023/results/
-S;NORWAY;NORWAY 4;2023;https://www.flashscore.com/football/norway/division-3-group-6-2023/results/
-S;SWEDEN;SWEDEN 1;2023;https://www.flashscore.com/football/sweden/allsvenskan-2023/results/
-S;SWEDEN;SWEDEN 3;2023;https://www.flashscore.com/football/sweden/division-1-norra-2023/results/
-S;SWEDEN;SWEDEN 2;2023;https://www.flashscore.com/football/sweden/superettan-2023/results/
-S;SWEDEN;SWEDEN 3;2023;https://www.flashscore.com/football/sweden/division-1-sodra-2023/results/
-S;AUSTRIA;AUSTRIA 1;2022/2023;https://www.flashscore.com/football/austria/bundesliga-2022-2023/results/
-S;AUSTRIA;AUSTRIA 2;2022/2023;https://www.flashscore.com/football/austria/2-liga-2022-2023/results/
-S;AUSTRIA;AUSTRIA 3;2022/2023;https://www.flashscore.com/football/austria/regionalliga-east-2022-2023/results/
-S;AUSTRIA;AUSTRIA 3;2022/2023;https://www.flashscore.com/football/austria/regionalliga-west-2022-2023/results/
-S;AUSTRIA;AUSTRIA 4;2022/2023;https://www.flashscore.com/football/austria/burgenland-2022-2023/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 2;2022/2023;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-fbih-2022-2023/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 3;2022/2023;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-rs-2022-2023/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 1;2022/2023;https://www.flashscore.com/football/bosnia-and-herzegovina/wwin-liga-bih-2022-2023/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 2;2022/2023;https://www.flashscore.com/football/northern-ireland/nifl-championship-2022-2023/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 1;2022/2023;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2022-2023/results/
-S;SLOVAKIA;SLOVAKIA 3;2022/2023;https://www.flashscore.com/football/slovakia/3-liga-east-2022-2023/results/
-S;SLOVAKIA;SLOVAKIA 2;2022/2023;https://www.flashscore.com/football/slovakia/2-liga-2022-2023/results/
-S;SLOVAKIA;SLOVAKIA 1;2022/2023;https://www.flashscore.com/football/slovakia/nike-liga-2022-2023/results/
-S;SLOVAKIA;SLOVAKIA 3;2022/2023;https://www.flashscore.com/football/slovakia/3-liga-west-2022-2023/results/
-S;SLOVAKIA;SLOVAKIA 4;2022/2023;https://www.flashscore.com/football/slovakia/4-liga-bratislava-2022-2023/results/
-S;SLOVENIA;SLOVENIA 1;2022/2023;https://www.flashscore.com/football/slovenia/prva-liga-2022-2023/results/
-S;SLOVENIA;SLOVENIA 2;2022/2023;https://www.flashscore.com/football/slovenia/2-snl-2022-2023/results/
-S;SLOVENIA;SLOVENIA 3;2022/2023;https://www.flashscore.com/football/slovenia/3-snl-west-2022-2023/results/
-S;SLOVENIA;SLOVENIA 3;2022/2023;https://www.flashscore.com/football/slovenia/3-snl-east-2022-2023/results/
-S;WALES;WALES 2;2022/2023;https://www.flashscore.com/football/wales/cymru-north-2022-2023/results/
-S;WALES;WALES 2;2022/2023;https://www.flashscore.com/football/wales/cymru-south-2022-2023/results/
-S;WALES;WALES 1;2022/2023;https://www.flashscore.com/football/wales/cymru-premier-2022-2023/results/
-S;ESTONIA;ESTONIA 1;2022;https://www.flashscore.com/football/estonia/meistriliiga-2022/results/
-S;ESTONIA;ESTONIA 2;2022;https://www.flashscore.com/football/estonia/esiliiga-2022/results/
-S;ESTONIA;ESTONIA 3;2022;https://www.flashscore.com/football/estonia/esiliiga-b-2022/results/
 S;IRELAND;IRELAND 1;2022;https://www.flashscore.com/football/ireland/premier-division-2022/results/
-S;IRELAND;IRELAND 2;2022;https://www.flashscore.com/football/ireland/division-1-2022/results/
-S;NORWAY;NORWAY 1;2022;https://www.flashscore.com/football/norway/eliteserien-2022/results/
-S;NORWAY;NORWAY 2;2022;https://www.flashscore.com/football/norway/obos-ligaen-2022/results/
-S;NORWAY;NORWAY 3;2022;https://www.flashscore.com/football/norway/division-2-group-1-2022/results/
-S;NORWAY;NORWAY 4;2022;https://www.flashscore.com/football/norway/division-3-group-4-2022/results/
-S;NORWAY;NORWAY 4;2022;https://www.flashscore.com/football/norway/division-3-group-1-2022/results/
-S;NORWAY;NORWAY 3;2022;https://www.flashscore.com/football/norway/division-2-group-2-2022/results/
-S;NORWAY;NORWAY 4;2022;https://www.flashscore.com/football/norway/division-3-group-2-2022/results/
-S;NORWAY;NORWAY 4;2022;https://www.flashscore.com/football/norway/division-3-group-5-2022/results/
-S;NORWAY;NORWAY 4;2022;https://www.flashscore.com/football/norway/division-3-group-3-2022/results/
-S;NORWAY;NORWAY 4;2022;https://www.flashscore.com/football/norway/division-3-group-6-2022/results/
-S;SWEDEN;SWEDEN 1;2022;https://www.flashscore.com/football/sweden/allsvenskan-2022/results/
-S;SWEDEN;SWEDEN 3;2022;https://www.flashscore.com/football/sweden/division-1-norra-2022/results/
-S;SWEDEN;SWEDEN 2;2022;https://www.flashscore.com/football/sweden/superettan-2022/results/
-S;SWEDEN;SWEDEN 3;2022;https://www.flashscore.com/football/sweden/division-1-sodra-2022/results/
-S;AUSTRIA;AUSTRIA 1;2021/2022;https://www.flashscore.com/football/austria/bundesliga-2021-2022/results/
-S;AUSTRIA;AUSTRIA 2;2021/2022;https://www.flashscore.com/football/austria/2-liga-2021-2022/results/
-S;AUSTRIA;AUSTRIA 3;2021/2022;https://www.flashscore.com/football/austria/regionalliga-east-2021-2022/results/
-S;AUSTRIA;AUSTRIA 3;2021/2022;https://www.flashscore.com/football/austria/regionalliga-west-2021-2022/results/
-S;AUSTRIA;AUSTRIA 4;2021/2022;https://www.flashscore.com/football/austria/burgenland-2021-2022/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 2;2021/2022;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-fbih-2021-2022/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 3;2021/2022;https://www.flashscore.com/football/bosnia-and-herzegovina/prva-liga-rs-2021-2022/results/
-S;BOSNIA AND HERZEGOVINA;BOSNIA AND HERZEGOVINA 1;2021/2022;https://www.flashscore.com/football/bosnia-and-herzegovina/wwin-liga-bih-2021-2022/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 2;2021/2022;https://www.flashscore.com/football/northern-ireland/nifl-championship-2021-2022/results/
-S;NORTHERN IRELAND;NORTHERN IRELAND 1;2021/2022;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2021-2022/results/
-S;SLOVAKIA;SLOVAKIA 2;2021/2022;https://www.flashscore.com/football/slovakia/2-liga-2021-2022/results/
-S;SLOVAKIA;SLOVAKIA 1;2021/2022;https://www.flashscore.com/football/slovakia/nike-liga-2021-2022/results/
-S;SLOVAKIA;SLOVAKIA 4;2021/2022;https://www.flashscore.com/football/slovakia/4-liga-bratislava-2021-2022/results/
-S;SLOVENIA;SLOVENIA 1;2021/2022;https://www.flashscore.com/football/slovenia/prva-liga-2021-2022/results/
-S;SLOVENIA;SLOVENIA 2;2021/2022;https://www.flashscore.com/football/slovenia/2-snl-2021-2022/results/
-S;SLOVENIA;SLOVENIA 3;2021/2022;https://www.flashscore.com/football/slovenia/3-snl-west-2021-2022/results/
-S;SLOVENIA;SLOVENIA 3;2021/2022;https://www.flashscore.com/football/slovenia/3-snl-east-2021-2022/results/
-S;WALES;WALES 2;2021/2022;https://www.flashscore.com/football/wales/cymru-north-2021-2022/results/
-S;WALES;WALES 2;2021/2022;https://www.flashscore.com/football/wales/cymru-south-2021-2022/results/
-S;WALES;WALES 1;2021/2022;https://www.flashscore.com/football/wales/cymru-premier-2021-2022/results/
-S;ESTONIA;ESTONIA 1;2021;https://www.flashscore.com/football/estonia/meistriliiga-2021/results/
-S;ESTONIA;ESTONIA 2;2021;https://www.flashscore.com/football/estonia/esiliiga-2021/results/
-S;ESTONIA;ESTONIA 3;2021;https://www.flashscore.com/football/estonia/esiliiga-b-2021/results/
 S;IRELAND;IRELAND 1;2021;https://www.flashscore.com/football/ireland/premier-division-2021/results/
+S;IRELAND;IRELAND 2;2027;https://www.flashscore.com/football/ireland/division-1-2027/results/
+S;IRELAND;IRELAND 2;2026;https://www.flashscore.com/football/ireland/division-1-2026/results/
+S;IRELAND;IRELAND 2;2025;https://www.flashscore.com/football/ireland/division-1-2025/results/
+S;IRELAND;IRELAND 2;2024;https://www.flashscore.com/football/ireland/division-1-2024/results/
+S;IRELAND;IRELAND 2;2023;https://www.flashscore.com/football/ireland/division-1-2023/results/
+S;IRELAND;IRELAND 2;2022;https://www.flashscore.com/football/ireland/division-1-2022/results/
 S;IRELAND;IRELAND 2;2021;https://www.flashscore.com/football/ireland/division-1-2021/results/
-S;NORWAY;NORWAY 1;2021;https://www.flashscore.com/football/norway/eliteserien-2021/results/
-S;NORWAY;NORWAY 2;2021;https://www.flashscore.com/football/norway/obos-ligaen-2021/results/
-S;NORWAY;NORWAY 3;2021;https://www.flashscore.com/football/norway/division-2-group-1-2021/results/
-S;NORWAY;NORWAY 4;2021;https://www.flashscore.com/football/norway/division-3-group-4-2021/results/
-S;NORWAY;NORWAY 4;2021;https://www.flashscore.com/football/norway/division-3-group-1-2021/results/
-S;NORWAY;NORWAY 3;2021;https://www.flashscore.com/football/norway/division-2-group-2-2021/results/
-S;NORWAY;NORWAY 4;2021;https://www.flashscore.com/football/norway/division-3-group-2-2021/results/
-S;NORWAY;NORWAY 4;2021;https://www.flashscore.com/football/norway/division-3-group-5-2021/results/
-S;NORWAY;NORWAY 4;2021;https://www.flashscore.com/football/norway/division-3-group-3-2021/results/
-S;NORWAY;NORWAY 4;2021;https://www.flashscore.com/football/norway/division-3-group-6-2021/results/
-S;SWEDEN;SWEDEN 1;2021;https://www.flashscore.com/football/sweden/allsvenskan-2021/results/
-S;SWEDEN;SWEDEN 3;2021;https://www.flashscore.com/football/sweden/division-1-norra-2021/results/
-S;SWEDEN;SWEDEN 2;2021;https://www.flashscore.com/football/sweden/superettan-2021/results/
-S;SWEDEN;SWEDEN 3;2021;https://www.flashscore.com/football/sweden/division-1-sodra-2021/results/
-S;BULGARIA;BULGARIA 1;2026/2027;https://www.flashscore.com/football/bulgaria/efbet-league/results/
-S;BULGARIA;BULGARIA 2;2026/2027;https://www.flashscore.com/football/bulgaria/vtora-liga/results/
-S;BULGARIA;BULGARIA 3;2026/2027;https://www.flashscore.com/football/bulgaria/third-league-south-west/results/
-S;BULGARIA;BULGARIA 3;2026/2027;https://www.flashscore.com/football/bulgaria/third-league-north-east/results/
-S;BULGARIA;BULGARIA 3;2026/2027;https://www.flashscore.com/football/bulgaria/third-league-north-west/results/
-S;BULGARIA;BULGARIA 3;2026/2027;https://www.flashscore.com/football/bulgaria/third-league-south-east/results/
-S;CROATIA;CROATIA 1;2026/2027;https://www.flashscore.com/football/croatia/hnl/results/
-S;CROATIA;CROATIA 3;2026/2027;https://www.flashscore.com/football/croatia/druga-nl/results/
-S;CROATIA;CROATIA 2;2026/2027;https://www.flashscore.com/football/croatia/prva-nl/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-9/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-7/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-8/results/
-S;GREECE;GREECE 1;2026/2027;https://www.flashscore.com/football/greece/super-league/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-10/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-1/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-5/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-6/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-2/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-4/results/
-S;GREECE;GREECE 2;2026/2027;https://www.flashscore.com/football/greece/super-league-2/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-relegation-play-offs/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-group-3/results/
-S;GREECE;GREECE 3;2026/2027;https://www.flashscore.com/football/greece/gamma-ethniki-promotion-play-offs/results/
-S;POLAND;POLAND 1;2026/2027;https://www.flashscore.com/football/poland/ekstraklasa/results/
-S;POLAND;POLAND 2;2026/2027;https://www.flashscore.com/football/poland/division-1/results/
-S;POLAND;POLAND 3;2026/2027;https://www.flashscore.com/football/poland/division-2/results/
-S;POLAND;POLAND 4;2026/2027;https://www.flashscore.com/football/poland/iii-liga-group-iii/results/
-S;POLAND;POLAND 4;2026/2027;https://www.flashscore.com/football/poland/iii-liga-group-ii/results/
-S;POLAND;POLAND 4;2026/2027;https://www.flashscore.com/football/poland/iii-liga-group-i/results/
-S;POLAND;POLAND 4;2026/2027;https://www.flashscore.com/football/poland/iii-liga-group-iv/results/
-S;ROMANIA;ROMANIA 1;2026/2027;https://www.flashscore.com/football/romania/superliga/results/
-S;ROMANIA;ROMANIA 3;2026/2027;https://www.flashscore.com/football/romania/liga-3-seria-2/results/
-S;ROMANIA;ROMANIA 2;2026/2027;https://www.flashscore.com/football/romania/liga-2/results/
-S;ROMANIA;ROMANIA 3;2026/2027;https://www.flashscore.com/football/romania/liga-3-seria-1/results/
-S;SERBIA;SERBIA 1;2026/2027;https://www.flashscore.com/football/serbia/mozzart-bet-super-liga/results/
-S;SERBIA;SERBIA 3;2026/2027;https://www.flashscore.com/football/serbia/srpska-liga-belgrade/results/
-S;SERBIA;SERBIA 2;2026/2027;https://www.flashscore.com/football/serbia/mozzart-bet-prva-liga/results/
-S;SERBIA;SERBIA 4;2026/2027;https://www.flashscore.com/football/serbia/srpska-liga-vojvodina/results/
-S;SWITZERLAND;SWITZERLAND 1;2026/2027;https://www.flashscore.com/football/switzerland/super-league/results/
-S;SWITZERLAND;SWITZERLAND 2;2026/2027;https://www.flashscore.com/football/switzerland/challenge-league/results/
-S;SWITZERLAND;SWITZERLAND 4;2026/2027;https://www.flashscore.com/football/switzerland/1-liga-classic-play-offs/results/
-S;SWITZERLAND;SWITZERLAND 4;2026/2027;https://www.flashscore.com/football/switzerland/1-liga-classic-group-1/results/
-S;SWITZERLAND;SWITZERLAND 4;2026/2027;https://www.flashscore.com/football/switzerland/1-liga-classic-group-2/results/
-S;SWITZERLAND;SWITZERLAND 3;2026/2027;https://www.flashscore.com/football/switzerland/promotion-league/results/
-S;SWITZERLAND;SWITZERLAND 4;2026/2027;https://www.flashscore.com/football/switzerland/1-liga-classic-group-3/results/
-S;TURKEY;TURKEY 1;2026/2027;https://www.flashscore.com/football/turkey/super-lig/results/
-S;TURKEY;TURKEY 2;2026/2027;https://www.flashscore.com/football/turkey/1-lig/results/
-S;TURKEY;TURKEY 3;2026/2027;https://www.flashscore.com/football/turkey/2-lig-red-group/results/
-S;TURKEY;TURKEY 3;2026/2027;https://www.flashscore.com/football/turkey/2-lig-white-group/results/
-S;UKRAINE;UKRAINE 3;2026/2027;https://www.flashscore.com/football/ukraine/druha-liga/results/
-S;UKRAINE;UKRAINE 2;2026/2027;https://www.flashscore.com/football/ukraine/persha-liga/results/
-S;UKRAINE;UKRAINE 1;2026/2027;https://www.flashscore.com/football/ukraine/premier-league/results/
-S;CROATIA;CROATIA 1;2023/2024;https://www.flashscore.com/football/croatia/hnl-2023-2024/results/
-S;CROATIA;CROATIA 3;2023/2024;https://www.flashscore.com/football/croatia/druga-nl-2023-2024/results/
-S;CROATIA;CROATIA 2;2023/2024;https://www.flashscore.com/football/croatia/prva-nl-2023-2024/results/
-S;GREECE;GREECE 1;2023/2024;https://www.flashscore.com/football/greece/super-league-2023-2024/results/
-S;GREECE;GREECE 3;2023/2024;https://www.flashscore.com/football/greece/gamma-ethniki-group-1-2023-2024/results/
-S;GREECE;GREECE 3;2023/2024;https://www.flashscore.com/football/greece/gamma-ethniki-group-2-2023-2024/results/
-S;GREECE;GREECE 3;2023/2024;https://www.flashscore.com/football/greece/gamma-ethniki-group-4-2023-2024/results/
-S;GREECE;GREECE 2;2023/2024;https://www.flashscore.com/football/greece/super-league-2-2023-2024/results/
-S;GREECE;GREECE 3;2023/2024;https://www.flashscore.com/football/greece/gamma-ethniki-relegation-play-offs/results/
-S;GREECE;GREECE 3;2023/2024;https://www.flashscore.com/football/greece/gamma-ethniki-group-3-2023-2024/results/
-S;GREECE;GREECE 3;2023/2024;https://www.flashscore.com/football/greece/gamma-ethniki-promotion-play-offs-2023-2024/results/
-S;POLAND;POLAND 1;2023/2024;https://www.flashscore.com/football/poland/ekstraklasa-2023-2024/results/
-S;POLAND;POLAND 2;2023/2024;https://www.flashscore.com/football/poland/division-1-2023-2024/results/
-S;POLAND;POLAND 3;2023/2024;https://www.flashscore.com/football/poland/division-2-2023-2024/results/
-S;POLAND;POLAND 4;2023/2024;https://www.flashscore.com/football/poland/iii-liga-group-iii-2023-2024/results/
-S;POLAND;POLAND 4;2023/2024;https://www.flashscore.com/football/poland/iii-liga-group-ii-2023-2024/results/
-S;POLAND;POLAND 4;2023/2024;https://www.flashscore.com/football/poland/iii-liga-group-i-2023-2024/results/
-S;POLAND;POLAND 4;2023/2024;https://www.flashscore.com/football/poland/iii-liga-group-iv-2023-2024/results/
-S;ROMANIA;ROMANIA 1;2023/2024;https://www.flashscore.com/football/romania/superliga-2023-2024/results/
-S;ROMANIA;ROMANIA 3;2023/2024;https://www.flashscore.com/football/romania/liga-3-seria-2-2023-2024/results/
-S;ROMANIA;ROMANIA 2;2023/2024;https://www.flashscore.com/football/romania/liga-2-2023-2024/results/
-S;ROMANIA;ROMANIA 3;2023/2024;https://www.flashscore.com/football/romania/liga-3-seria-1-2023-2024/results/
-S;SERBIA;SERBIA 1;2023/2024;https://www.flashscore.com/football/serbia/mozzart-bet-super-liga-2023-2024/results/
-S;SERBIA;SERBIA 3;2023/2024;https://www.flashscore.com/football/serbia/srpska-liga-belgrade-2023-2024/results/
-S;SERBIA;SERBIA 2;2023/2024;https://www.flashscore.com/football/serbia/mozzart-bet-prva-liga-2023-2024/results/
-S;SERBIA;SERBIA 4;2023/2024;https://www.flashscore.com/football/serbia/srpska-liga-vojvodina-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 1;2023/2024;https://www.flashscore.com/football/switzerland/super-league-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 2;2023/2024;https://www.flashscore.com/football/switzerland/challenge-league-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 4;2023/2024;https://www.flashscore.com/football/switzerland/1-liga-classic-play-offs-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 4;2023/2024;https://www.flashscore.com/football/switzerland/1-liga-classic-group-1-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 4;2023/2024;https://www.flashscore.com/football/switzerland/1-liga-classic-group-2-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 3;2023/2024;https://www.flashscore.com/football/switzerland/promotion-league-2023-2024/results/
-S;SWITZERLAND;SWITZERLAND 4;2023/2024;https://www.flashscore.com/football/switzerland/1-liga-classic-group-3-2023-2024/results/
-S;TURKEY;TURKEY 1;2023/2024;https://www.flashscore.com/football/turkey/super-lig-2023-2024/results/
-S;TURKEY;TURKEY 2;2023/2024;https://www.flashscore.com/football/turkey/1-lig-2023-2024/results/
-S;TURKEY;TURKEY 3;2023/2024;https://www.flashscore.com/football/turkey/2-lig-red-group-2023-2024/results/
-S;TURKEY;TURKEY 3;2023/2024;https://www.flashscore.com/football/turkey/2-lig-white-group-2023-2024/results/
-S;UKRAINE;UKRAINE 3;2023/2024;https://www.flashscore.com/football/ukraine/druha-liga-2023-2024/results/
-S;UKRAINE;UKRAINE 2;2023/2024;https://www.flashscore.com/football/ukraine/persha-liga-2023-2024/results/
-S;UKRAINE;UKRAINE 1;2023/2024;https://www.flashscore.com/football/ukraine/premier-league-2023-2024/results/
-S;BULGARIA;BULGARIA 1;2022/2023;https://www.flashscore.com/football/bulgaria/efbet-league-2022-2023/results/
-S;BULGARIA;BULGARIA 2;2022/2023;https://www.flashscore.com/football/bulgaria/vtora-liga-2022-2023/results/
-S;BULGARIA;BULGARIA 3;2022/2023;https://www.flashscore.com/football/bulgaria/third-league-south-west-2022-2023/results/
-S;BULGARIA;BULGARIA 3;2022/2023;https://www.flashscore.com/football/bulgaria/third-league-north-east-2022-2023/results/
-S;BULGARIA;BULGARIA 3;2022/2023;https://www.flashscore.com/football/bulgaria/third-league-north-west-2022-2023/results/
-S;BULGARIA;BULGARIA 3;2022/2023;https://www.flashscore.com/football/bulgaria/third-league-south-east-2022-2023/results/
-S;CROATIA;CROATIA 1;2022/2023;https://www.flashscore.com/football/croatia/hnl-2022-2023/results/
-S;CROATIA;CROATIA 3;2022/2023;https://www.flashscore.com/football/croatia/druga-nl-2022-2023/results/
-S;CROATIA;CROATIA 2;2022/2023;https://www.flashscore.com/football/croatia/prva-nl-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-9-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-7-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-8-2022-2023/results/
-S;GREECE;GREECE 1;2022/2023;https://www.flashscore.com/football/greece/super-league-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-10-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-1-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-5-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-6-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-2-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-4-2022-2023/results/
-S;GREECE;GREECE 2;2022/2023;https://www.flashscore.com/football/greece/super-league-2-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-group-3-2022-2023/results/
-S;GREECE;GREECE 3;2022/2023;https://www.flashscore.com/football/greece/gamma-ethniki-promotion-play-offs-2022-2023/results/
-S;POLAND;POLAND 1;2022/2023;https://www.flashscore.com/football/poland/ekstraklasa-2022-2023/results/
-S;POLAND;POLAND 2;2022/2023;https://www.flashscore.com/football/poland/division-1-2022-2023/results/
-S;POLAND;POLAND 3;2022/2023;https://www.flashscore.com/football/poland/division-2-2022-2023/results/
-S;POLAND;POLAND 4;2022/2023;https://www.flashscore.com/football/poland/iii-liga-group-iii-2022-2023/results/
-S;POLAND;POLAND 4;2022/2023;https://www.flashscore.com/football/poland/iii-liga-group-ii-2022-2023/results/
-S;POLAND;POLAND 4;2022/2023;https://www.flashscore.com/football/poland/iii-liga-group-i-2022-2023/results/
-S;POLAND;POLAND 4;2022/2023;https://www.flashscore.com/football/poland/iii-liga-group-iv-2022-2023/results/
-S;ROMANIA;ROMANIA 1;2022/2023;https://www.flashscore.com/football/romania/superliga-2022-2023/results/
-S;ROMANIA;ROMANIA 3;2022/2023;https://www.flashscore.com/football/romania/liga-3-seria-2-2022-2023/results/
-S;ROMANIA;ROMANIA 2;2022/2023;https://www.flashscore.com/football/romania/liga-2-2022-2023/results/
-S;ROMANIA;ROMANIA 3;2022/2023;https://www.flashscore.com/football/romania/liga-3-seria-1-2022-2023/results/
-S;SERBIA;SERBIA 1;2022/2023;https://www.flashscore.com/football/serbia/mozzart-bet-super-liga-2022-2023/results/
-S;SERBIA;SERBIA 3;2022/2023;https://www.flashscore.com/football/serbia/srpska-liga-belgrade-2022-2023/results/
-S;SERBIA;SERBIA 2;2022/2023;https://www.flashscore.com/football/serbia/mozzart-bet-prva-liga-2022-2023/results/
-S;SERBIA;SERBIA 4;2022/2023;https://www.flashscore.com/football/serbia/srpska-liga-vojvodina-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 1;2022/2023;https://www.flashscore.com/football/switzerland/super-league-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 2;2022/2023;https://www.flashscore.com/football/switzerland/challenge-league-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 4;2022/2023;https://www.flashscore.com/football/switzerland/1-liga-classic-play-offs-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 4;2022/2023;https://www.flashscore.com/football/switzerland/1-liga-classic-group-1-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 4;2022/2023;https://www.flashscore.com/football/switzerland/1-liga-classic-group-2-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 3;2022/2023;https://www.flashscore.com/football/switzerland/promotion-league-2022-2023/results/
-S;SWITZERLAND;SWITZERLAND 4;2022/2023;https://www.flashscore.com/football/switzerland/1-liga-classic-group-3-2022-2023/results/
-S;TURKEY;TURKEY 1;2022/2023;https://www.flashscore.com/football/turkey/super-lig-2022-2023/results/
-S;TURKEY;TURKEY 2;2022/2023;https://www.flashscore.com/football/turkey/1-lig-2022-2023/results/
-S;TURKEY;TURKEY 3;2022/2023;https://www.flashscore.com/football/turkey/2-lig-red-group-2022-2023/results/
-S;TURKEY;TURKEY 3;2022/2023;https://www.flashscore.com/football/turkey/2-lig-white-group-2022-2023/results/
-S;UKRAINE;UKRAINE 3;2022/2023;https://www.flashscore.com/football/ukraine/druha-liga-2022-2023/results/
-S;UKRAINE;UKRAINE 2;2022/2023;https://www.flashscore.com/football/ukraine/persha-liga-2022-2023/results/
-S;UKRAINE;UKRAINE 1;2022/2023;https://www.flashscore.com/football/ukraine/premier-league-2022-2023/results/
-S;BULGARIA;BULGARIA 1;2021/2022;https://www.flashscore.com/football/bulgaria/efbet-league-2021-2022/results/
-S;BULGARIA;BULGARIA 2;2021/2022;https://www.flashscore.com/football/bulgaria/vtora-liga-2021-2022/results/
-S;BULGARIA;BULGARIA 3;2021/2022;https://www.flashscore.com/football/bulgaria/third-league-south-west-2021-2022/results/
-S;BULGARIA;BULGARIA 3;2021/2022;https://www.flashscore.com/football/bulgaria/third-league-north-east-2021-2022/results/
-S;BULGARIA;BULGARIA 3;2021/2022;https://www.flashscore.com/football/bulgaria/third-league-north-west-2021-2022/results/
-S;BULGARIA;BULGARIA 3;2021/2022;https://www.flashscore.com/football/bulgaria/third-league-south-east-2021-2022/results/
-S;CROATIA;CROATIA 1;2021/2022;https://www.flashscore.com/football/croatia/hnl-2021-2022/results/
-S;CROATIA;CROATIA 2;2021/2022;https://www.flashscore.com/football/croatia/prva-nl-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-9-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-7-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-8-2021-2022/results/
-S;GREECE;GREECE 1;2021/2022;https://www.flashscore.com/football/greece/super-league-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-10-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-1-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-5-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-6-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-2-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-4-2021-2022/results/
-S;GREECE;GREECE 2;2021/2022;https://www.flashscore.com/football/greece/super-league-2-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-group-3-2021-2022/results/
-S;GREECE;GREECE 3;2021/2022;https://www.flashscore.com/football/greece/gamma-ethniki-promotion-play-offs-2021-2022/results/
-S;POLAND;POLAND 1;2021/2022;https://www.flashscore.com/football/poland/ekstraklasa-2021-2022/results/
-S;POLAND;POLAND 2;2021/2022;https://www.flashscore.com/football/poland/division-1-2021-2022/results/
-S;POLAND;POLAND 3;2021/2022;https://www.flashscore.com/football/poland/division-2-2021-2022/results/
-S;POLAND;POLAND 4;2021/2022;https://www.flashscore.com/football/poland/iii-liga-group-iii-2021-2022/results/
-S;POLAND;POLAND 4;2021/2022;https://www.flashscore.com/football/poland/iii-liga-group-ii-2021-2022/results/
-S;POLAND;POLAND 4;2021/2022;https://www.flashscore.com/football/poland/iii-liga-group-i-2021-2022/results/
-S;POLAND;POLAND 4;2021/2022;https://www.flashscore.com/football/poland/iii-liga-group-iv-2021-2022/results/
-S;ROMANIA;ROMANIA 1;2021/2022;https://www.flashscore.com/football/romania/superliga-2021-2022/results/
-S;ROMANIA;ROMANIA 3;2021/2022;https://www.flashscore.com/football/romania/liga-3-seria-2-2021-2022/results/
-S;ROMANIA;ROMANIA 2;2021/2022;https://www.flashscore.com/football/romania/liga-2-2021-2022/results/
-S;ROMANIA;ROMANIA 3;2021/2022;https://www.flashscore.com/football/romania/liga-3-seria-1-2021-2022/results/
-S;SERBIA;SERBIA 1;2021/2022;https://www.flashscore.com/football/serbia/mozzart-bet-super-liga-2021-2022/results/
-S;SERBIA;SERBIA 3;2021/2022;https://www.flashscore.com/football/serbia/srpska-liga-belgrade-2021-2022/results/
-S;SERBIA;SERBIA 2;2021/2022;https://www.flashscore.com/football/serbia/mozzart-bet-prva-liga-2021-2022/results/
-S;SERBIA;SERBIA 4;2021/2022;https://www.flashscore.com/football/serbia/srpska-liga-vojvodina-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 1;2021/2022;https://www.flashscore.com/football/switzerland/super-league-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 2;2021/2022;https://www.flashscore.com/football/switzerland/challenge-league-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 4;2021/2022;https://www.flashscore.com/football/switzerland/1-liga-classic-play-offs-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 4;2021/2022;https://www.flashscore.com/football/switzerland/1-liga-classic-group-1-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 4;2021/2022;https://www.flashscore.com/football/switzerland/1-liga-classic-group-2-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 3;2021/2022;https://www.flashscore.com/football/switzerland/promotion-league-2021-2022/results/
-S;SWITZERLAND;SWITZERLAND 4;2021/2022;https://www.flashscore.com/football/switzerland/1-liga-classic-group-3-2021-2022/results/
-S;TURKEY;TURKEY 1;2021/2022;https://www.flashscore.com/football/turkey/super-lig-2021-2022/results/
-S;TURKEY;TURKEY 2;2021/2022;https://www.flashscore.com/football/turkey/1-lig-2021-2022/results/
-S;TURKEY;TURKEY 3;2021/2022;https://www.flashscore.com/football/turkey/2-lig-red-group-2021-2022/results/
-S;TURKEY;TURKEY 3;2021/2022;https://www.flashscore.com/football/turkey/2-lig-white-group-2021-2022/results/
-S;UKRAINE;UKRAINE 3;2021/2022;https://www.flashscore.com/football/ukraine/druha-liga-2021-2022/results/
-S;UKRAINE;UKRAINE 2;2021/2022;https://www.flashscore.com/football/ukraine/persha-liga-2021-2022/results/
-S;UKRAINE;UKRAINE 1;2021/2022;https://www.flashscore.com/football/ukraine/premier-league-2021-2022/results/
+S;MOROCCO;MOROCCO 1;2026/2027;https://www.flashscore.com/football/morocco/botola-pro-2026-2027/results/
+S;MOROCCO;MOROCCO 1;2025/2026;https://www.flashscore.com/football/morocco/botola-pro/results/
+S;MOROCCO;MOROCCO 1;2024/2025;https://www.flashscore.com/football/morocco/botola-pro-2024-2025/results/
+S;MOROCCO;MOROCCO 1;2023/2024;https://www.flashscore.com/football/morocco/botola-pro-2023-2024/results/
+S;MOROCCO;MOROCCO 1;2022/2023;https://www.flashscore.com/football/morocco/botola-pro-2022-2023/results/
+S;MOROCCO;MOROCCO 1;2021/2022;https://www.flashscore.com/football/morocco/botola-pro-2021-2022/results/
+S;MOROCCO;MOROCCO 2;2026/2027;https://www.flashscore.com/football/morocco/botola-2-2026-2027/results/
+S;MOROCCO;MOROCCO 2;2025/2026;https://www.flashscore.com/football/morocco/botola-2/results/
+S;MOROCCO;MOROCCO 2;2024/2025;https://www.flashscore.com/football/morocco/botola-2-2024-2025/results/
+S;MOROCCO;MOROCCO 2;2023/2024;https://www.flashscore.com/football/morocco/botola-2-2023-2024/results/
+S;MOROCCO;MOROCCO 2;2022/2023;https://www.flashscore.com/football/morocco/botola-2-2022-2023/results/
+S;MOROCCO;MOROCCO 2;2021/2022;https://www.flashscore.com/football/morocco/botola-2-2021-2022/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 2;2026/2027;https://www.flashscore.com/football/northern-ireland/nifl-championship/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 2;2025/2026;https://www.flashscore.com/football/northern-ireland/nifl-championship-2025-2026/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 2;2024/2025;https://www.flashscore.com/football/northern-ireland/nifl-championship-2024-2025/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 2;2023/2024;https://www.flashscore.com/football/northern-ireland/nifl-championship-2023-2024/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 2;2022/2023;https://www.flashscore.com/football/northern-ireland/nifl-championship-2022-2023/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 2;2021/2022;https://www.flashscore.com/football/northern-ireland/nifl-championship-2021-2022/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 1;2026/2027;https://www.flashscore.com/football/northern-ireland/nifl-premiership/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 1;2025/2026;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2025-2026/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 1;2024/2025;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2024-2025/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 1;2023/2024;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2023-2024/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 1;2022/2023;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2022-2023/results/
+S;NORTHERN IRELAND;NORTHERN IRELAND 1;2021/2022;https://www.flashscore.com/football/northern-ireland/nifl-premiership-2021-2022/results/
+S;SOUTH AFRICA;SOUTH AFRICA 1;2026/2027;https://www.flashscore.com/football/south-africa/betway-premiership-2026-2027/results/
+S;SOUTH AFRICA;SOUTH AFRICA 1;2025/2026;https://www.flashscore.com/football/south-africa/betway-premiership-2025-2026/results/
+S;SOUTH AFRICA;SOUTH AFRICA 1;2024/2025;https://www.flashscore.com/football/south-africa/betway-premiership-2024-2025/results/
+S;SOUTH AFRICA;SOUTH AFRICA 1;2023/2024;https://www.flashscore.com/football/south-africa/betway-premiership-2023-2024/results/
+S;SOUTH AFRICA;SOUTH AFRICA 1;2022/2023;https://www.flashscore.com/football/south-africa/betway-premiership-2022-2023/results/
+S;SOUTH AFRICA;SOUTH AFRICA 1;2021/2022;https://www.flashscore.com/football/south-africa/betway-premiership-2021-2022/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2026/2027;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship-2026-2027/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2026;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2025/2026;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship-2025-2026/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2024/2025;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship-2024-2025/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2023/2024;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship-2023-2024/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2022/2023;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship-2022-2023/results/
+S;SOUTH AFRICA;SOUTH AFRICA 2;2021/2022;https://www.flashscore.com/football/south-africa/motsepe-foundation-championship-2021-2022/results/
+S;VIETNAM;VIETNAM 1;2026/2027;https://www.flashscore.com/football/vietnam/v-league-1/results/
+S;VIETNAM;VIETNAM 1;2025/2026;https://www.flashscore.com/football/vietnam/v-league-1-2025-2026/results/
+S;VIETNAM;VIETNAM 1;2024/2025;https://www.flashscore.com/football/vietnam/v-league-1-2024-2025/results/
+S;VIETNAM;VIETNAM 1;2023/2024;https://www.flashscore.com/football/vietnam/v-league-1-2023-2024/results/
+S;VIETNAM;VIETNAM 1;2023;https://www.flashscore.com/football/vietnam/v-league-1-2023/results/
+S;VIETNAM;VIETNAM 1;2022;https://www.flashscore.com/football/vietnam/v-league-1-2022/results/
+S;VIETNAM;VIETNAM 1;2021;https://www.flashscore.com/football/vietnam/v-league-1-2021/results/
+S;VIETNAM;VIETNAM 2;2026/2027;https://www.flashscore.com/football/vietnam/v-league-2/results/
+S;VIETNAM;VIETNAM 2;2025/2026;https://www.flashscore.com/football/vietnam/v-league-2-2025-2026/results/
+S;VIETNAM;VIETNAM 2;2024/2025;https://www.flashscore.com/football/vietnam/v-league-2-2024-2025/results/
+S;VIETNAM;VIETNAM 2;2023/2024;https://www.flashscore.com/football/vietnam/v-league-2-2023-2024/results/
+S;VIETNAM;VIETNAM 2;2023;https://www.flashscore.com/football/vietnam/v-league-2-2023/results/
+S;VIETNAM;VIETNAM 2;2022;https://www.flashscore.com/football/vietnam/v-league-2-2022/results/
+S;VIETNAM;VIETNAM 2;2021;https://www.flashscore.com/football/vietnam/v-league-2-2021/results/
