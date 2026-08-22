@@ -361,14 +361,20 @@ async def _async_get_with_retry(
                 )
                 return None
             elif resp.status_code != 200:
-                # 🚨 Removido o 'if proxy_label != "IP_DIRETO":' para vermos todos os erros
                 print(
                     f"\n🚨 [HTTP {resp.status_code}] endpoint={endpoint_label} | "
                     f"match={match_id} | proxy={proxy_label} | url={url}"
                 )
                 if resp.text:
-                    print(f"🕵️ DETALHE DO ERRO: {resp.text}")
-                return None
+                    print(f"🕵️ DETALHE: {resp.text[:150]}")
+                
+                # Se for a última tentativa, aí sim desiste
+                if attempt == max_attempts - 1:
+                    return None
+                
+                # Se não for a última, espera um tempo exponencial e tenta de novo
+                await asyncio.sleep(2 ** attempt)
+                continue
             return resp
         except asyncio.CancelledError:
             raise
@@ -427,52 +433,55 @@ async def scrape_match_async(
         match_data["Min_Goals_Home"] = []
         match_data["Min_Goals_Away"] = []
 
-        if resp_sui and resp_sui.text:
+        if resp_sui:
+            # 👇 Marca como True assim que recebe status 200, com ou sem texto
             match_data["_scraped_sui"] = True
+            
             if delay_sumario > 0:
                 await asyncio.sleep(delay_sumario)
 
-            for event in resp_sui.text.split('~'):
-                is_goal = False
-                if any(x in event for x in [
-                    'IE÷3','IE÷4','IE÷10',
-                    'IE\xf73','IE\xf74','IE\xf710',
-                    'IE\xac3','IE\xac4','IE\xac10',
-                ]):
-                    is_goal = True
-                elif ('Goal' in event or 'Penalty' in event) and 'Missed' not in event and 'Awarded' not in event:
-                    is_goal = True
-                elif ('IK÷Penalty' in event or 'IK\xf7Penalty' in event or 'IK\xacPenalty' in event) and 'Missed' not in event:
-                    is_goal = True
+            if resp_sui.text:
+                for event in resp_sui.text.split('~'):
+                    is_goal = False
+                    if any(x in event for x in [
+                        'IE÷3','IE÷4','IE÷10',
+                        'IE\xf73','IE\xf74','IE\xf710',
+                        'IE\xac3','IE\xac4','IE\xac10',
+                    ]):
+                        is_goal = True
+                    elif ('Goal' in event or 'Penalty' in event) and 'Missed' not in event and 'Awarded' not in event:
+                        is_goal = True
+                    elif ('IK÷Penalty' in event or 'IK\xf7Penalty' in event or 'IK\xacPenalty' in event) and 'Missed' not in event:
+                        is_goal = True
 
-                if is_goal:
-                    is_home = any(h in event for h in ['IA÷1','IA\xf71','IA\xac1'])
-                    is_away = any(a in event for a in ['IA÷2','IA\xf72','IA\xac2'])
-                    m = re.search(r'IB[\xac\xf7÷](\d+)', event)
-                    if m:
-                        minute = int(m.group(1))
-                        if is_home:
-                            match_data["Min_Goals_Home"].append(minute)
-                        elif is_away:
-                            match_data["Min_Goals_Away"].append(minute)
+                    if is_goal:
+                        is_home = any(h in event for h in ['IA÷1','IA\xf71','IA\xac1'])
+                        is_away = any(a in event for a in ['IA÷2','IA\xf72','IA\xac2'])
+                        m = re.search(r'IB[\xac\xf7÷](\d+)', event)
+                        if m:
+                            minute = int(m.group(1))
+                            if is_home:
+                                match_data["Min_Goals_Home"].append(minute)
+                            elif is_away:
+                                match_data["Min_Goals_Away"].append(minute)
 
-            match_data["Min_Goals_Home"].sort()
-            match_data["Min_Goals_Away"].sort()
+        match_data["Min_Goals_Home"].sort()
+        match_data["Min_Goals_Away"].sort()
 
-            # feed dc_1 — notas de mata-mata / local neutro
-            try:
-                resp_dc = await session.get(
-                    f"{FEED_BASE}/dc_1_{match_id}", headers=HEADERS_FEED, timeout=5.0
-                )
-                if resp_dc and resp_dc.status_code == 200 and resp_dc.text:
-                    m_dm = re.search(r'DM[\xac\xf7÷]([^\xac\xf7÷~]+)', resp_dc.text)
-                    if m_dm:
-                        note = m_dm.group(1).strip()
-                        match_data["Match_Note"] = note
-                        if 'Neutral location' in note:
-                            match_data["Neutral_Location"] = True
-            except Exception:
-                pass
+        # feed dc_1 — notas de mata-mata / local neutro
+        try:
+            resp_dc = await session.get(
+                f"{FEED_BASE}/dc_1_{match_id}", headers=HEADERS_FEED, timeout=5.0
+            )
+            if resp_dc and resp_dc.status_code == 200 and resp_dc.text:
+                m_dm = re.search(r'DM[\xac\xf7÷]([^\xac\xf7÷~]+)', resp_dc.text)
+                if m_dm:
+                    note = m_dm.group(1).strip()
+                    match_data["Match_Note"] = note
+                    if 'Neutral location' in note:
+                        match_data["Neutral_Location"] = True
+        except Exception:
+            pass
 
     # ── 2. df_st (Estatísticas) ───────────────────────────────────────────────
     if need_st:
@@ -483,29 +492,33 @@ async def scrape_match_async(
         stats_data: Dict[str, Any] = {
             "Statistics_FT": {}, "Statistics_HT": {}, "Statistics_2T": {}
         }
-        if resp_st and resp_st.text:
+        
+        if resp_st:
+            # 👇 Marca como True assim que recebe status 200, com ou sem texto
             match_data["_scraped_st"] = True
+            
             if delay_stats > 0:
                 await asyncio.sleep(delay_stats)
 
-            current_stage = "Statistics_FT"
-            for sec in resp_st.text.split('~'):
-                if 'SE÷1st Half' in sec or 'SE\xf71st Half' in sec or 'SE\xac1st Half' in sec:
-                    current_stage = "Statistics_HT"
-                elif 'SE÷2nd Half' in sec or 'SE\xf72nd Half' in sec or 'SE\xac2nd Half' in sec:
-                    current_stage = "Statistics_2T"
-                elif 'SE÷Match' in sec or 'SE\xf7Match' in sec or 'SE\xacMatch' in sec:
-                    current_stage = "Statistics_FT"
+            if resp_st.text:
+                current_stage = "Statistics_FT"
+                for sec in resp_st.text.split('~'):
+                    if 'SE÷1st Half' in sec or 'SE\xf71st Half' in sec or 'SE\xac1st Half' in sec:
+                        current_stage = "Statistics_HT"
+                    elif 'SE÷2nd Half' in sec or 'SE\xf72nd Half' in sec or 'SE\xac2nd Half' in sec:
+                        current_stage = "Statistics_2T"
+                    elif 'SE÷Match' in sec or 'SE\xf7Match' in sec or 'SE\xacMatch' in sec:
+                        current_stage = "Statistics_FT"
 
-                m_sg = re.search(r'SG[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
-                m_sh = re.search(r'SH[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
-                m_si = re.search(r'SI[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
-                if m_sg and m_sh and m_si:
-                    stat_name = m_sg.group(1).strip()
-                    stats_data[current_stage][stat_name] = {
-                        "Home": _parse_stat(m_sh.group(1).strip()),
-                        "Away": _parse_stat(m_si.group(1).strip()),
-                    }
+                    m_sg = re.search(r'SG[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+                    m_sh = re.search(r'SH[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+                    m_si = re.search(r'SI[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+                    if m_sg and m_sh and m_si:
+                        stat_name = m_sg.group(1).strip()
+                        stats_data[current_stage][stat_name] = {
+                            "Home": _parse_stat(m_sh.group(1).strip()),
+                            "Away": _parse_stat(m_si.group(1).strip()),
+                        }
         match_data.update(stats_data)
 
     # ── 3. GraphQL OCE (Odds) ─────────────────────────────────────────────────
@@ -524,20 +537,13 @@ async def scrape_match_async(
                     await asyncio.sleep(delay_odds)
                 match_data.update(_parse_odds(resp_oce.json()))
             except Exception:
-                # Se falhar o JSON, marca como lido mas vazio
-                match_data["_scraped_oce"] = True
                 match_data.update(_empty_odds())
         else:
-            # 👇 A MÁGICA AQUI: Se a requisição retornou None (ex: Erro 500), 
-            # nós aceitamos a derrota, preenchemos com vazio e marcamos como True
-            # para não travar o salvamento da partida!
-            match_data["_scraped_oce"] = True 
-            
+            # Não mudamos o status para True aqui. Fica False para forçar o retry!
             for k, v in _empty_odds().items():
                 match_data.setdefault(k, v)
-
+                
     return match_data
-
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # HELPERS DE PARSING
