@@ -99,7 +99,8 @@ class FlashScoreAPIScraper:
             try:
                 resp = self.session.get(url, headers=self.headers_feed, timeout=2.0)
                 if resp.status_code == 429:
-                    time.sleep(0.3 * (attempt + 1))
+                    print(f"\n🚨 [RATE LIMIT] Status 429 no sumário do jogo {match_id} (Tentativa {attempt+1}/3)... Aguardando backoff!")
+                    time.sleep(0.4 * (attempt + 1))
                     continue
                 elif resp.status_code == 403:
                     print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 no jogo {match_id}!")
@@ -176,7 +177,8 @@ class FlashScoreAPIScraper:
             try:
                 resp = self.session.get(url, headers=self.headers_feed, timeout=2.0)
                 if resp.status_code == 429:
-                    time.sleep(0.3 * (attempt + 1))
+                    print(f"\n🚨 [RATE LIMIT] Status 429 em estatísticas do jogo {match_id} (Tentativa {attempt+1}/3)... Aguardando backoff!")
+                    time.sleep(0.4 * (attempt + 1))
                     continue
                 elif resp.status_code == 403:
                     print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 em estatísticas do jogo {match_id}!")
@@ -282,8 +284,8 @@ class FlashScoreAPIScraper:
             try:
                 resp = self.session.get(url, headers=self.headers_graphql, timeout=2.0)
                 if resp.status_code == 429:
-                    # Rate limit momentâneo: espera 0.3s e tenta de novo sem perder o jogo!
-                    time.sleep(0.3 * (attempt + 1))
+                    print(f"\n🚨 [RATE LIMIT] Status 429 no GraphQL do jogo {match_id} (Tentativa {attempt+1}/3)... Aguardando backoff!")
+                    time.sleep(0.4 * (attempt + 1))
                     continue
                 elif resp.status_code == 403:
                     print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 no GraphQL de Odds do jogo {match_id}!")
