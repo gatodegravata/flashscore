@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-FlashScore API Scraper (Versão 2.0 - Ultra Fast)
+FlashScore API Scraper (Versão 3.0 - Bug Fix + Delay por Endpoint)
 Baseado em requisições diretas via curl_cffi com TLS Impersonation (Chrome 120)
 Consome os feeds internos e a API GraphQL oficial do Flashscore sem abrir navegadores.
+
+Correções v3.0:
+- BUG CRÍTICO CORRIGIDO: parsing estava no bloco else do for...else (nunca executava após break)
+- Delays configuráveis por endpoint (delay_sumario, delay_stats, delay_odds)
+- Backoff exponencial nos retries (2^attempt segundos)
+- Log enriquecido: mostra qual endpoint + qual proxy ao detectar 429/403
 
 Vantagens:
 - Consumo de CPU: < 5% (contra 95% do Selenium)
@@ -22,46 +28,68 @@ except ImportError:
 
 
 class FlashScoreAPIScraper:
-    def __init__(self, proxy: Optional[str] = None):
+    def __init__(
+        self,
+        proxy: Optional[str] = None,
+        delay_sumario: float = 0.0,
+        delay_stats: float = 0.0,
+        delay_odds: float = 0.0,
+        proxy_label: Optional[str] = None,
+    ):
         """
         Inicializa o cliente rápido do Flashscore.
-        proxy: string no formato "ip:porta" ou "ip:porta:usuario:senha"
+
+        Args:
+            proxy: URL completa do proxy (ex: http://user:pass@ip:port) ou None para IP direto.
+            delay_sumario: segundos de sleep após cada request bem-sucedido ao df_sui.
+            delay_stats:   segundos de sleep após cada request bem-sucedido ao df_st.
+            delay_odds:    segundos de sleep após cada request bem-sucedido ao GraphQL OCE.
+            proxy_label:   rótulo legível para logs (ex: "proxy_3" ou "IP_DIRETO").
         """
         try:
             self.session = requests.Session(impersonate="chrome120")
         except TypeError:
             self.session = requests.Session()
+
         self.fsign = "SW9D1eZo"
         self.feed_base_url = "https://global.flashscore.ninja/2/x/feed"
         self.graphql_base_url = "https://global.ds.lsapp.eu/odds/pq_graphql"
-        
+
+        self.delay_sumario = delay_sumario
+        self.delay_stats = delay_stats
+        self.delay_odds = delay_odds
+        self.proxy_label = proxy_label or ("IP_DIRETO" if not proxy else proxy)
+
         self.headers_feed = {
             "Referer": "https://www.flashscore.com/",
             "Origin": "https://www.flashscore.com",
             "x-fsign": self.fsign,
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }
-        
+
         self.headers_graphql = {
             "Referer": "https://www.flashscore.com/",
             "Origin": "https://www.flashscore.com",
             "Accept": "*/*",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }
-        
+
         if proxy:
             self._set_proxy(proxy)
 
     def _set_proxy(self, proxy: str):
         """Configura proxy HTTP/SOCKS com suporte a autenticação"""
         parts = proxy.strip().split(':')
-        if len(parts) == 4:
+        if proxy.startswith("http://") or proxy.startswith("https://") or proxy.startswith("socks"):
+            # Já é URL completa — usa diretamente
+            proxy_url = proxy.strip()
+        elif len(parts) == 4:
             proxy_url = f"http://{parts[2]}:{parts[3]}@{parts[0]}:{parts[1]}"
         elif len(parts) == 2:
             proxy_url = f"http://{parts[0]}:{parts[1]}"
         else:
             proxy_url = proxy.strip()
-            
+
         self.session.proxies = {
             "http": proxy_url,
             "https": proxy_url
@@ -83,9 +111,21 @@ class FlashScoreAPIScraper:
         except (ValueError, TypeError):
             return None
 
+    def _log_rate_issue(self, status: int, endpoint_label: str, match_id: str, attempt: int):
+        """Exibe log padronizado de rate-limit ou bloqueio."""
+        icon = "🚨 [RATE LIMIT 429]" if status == 429 else "🚫 [BLOQUEIO 403]"
+        print(
+            f"\n{icon} endpoint={endpoint_label} | match={match_id} | "
+            f"proxy={self.proxy_label} | tentativa={attempt+1}/3"
+        )
+
     def get_match_summary(self, match_id: str) -> Dict[str, Any]:
         """
         Extrai informações básicas, placares e minutos dos gols via feed df_sui.
+
+        BUG FIX v3.0: o bloco de parsing foi movido para FORA do for...else.
+        Antes, estava no bloco `else` do `for`, que em Python só executa quando
+        o loop termina SEM break — ou seja, nunca executava após receber status 200.
         """
         url = f"{self.feed_base_url}/df_sui_1_{match_id}"
         data = {
@@ -93,77 +133,85 @@ class FlashScoreAPIScraper:
             "Min_Goals_Home": [],
             "Min_Goals_Away": []
         }
-        
+
         raw_text = ""
+        success = False
+
         for attempt in range(3):
             try:
-                resp = self.session.get(url, headers=self.headers_feed, timeout=2.0)
+                resp = self.session.get(url, headers=self.headers_feed, timeout=8.0)
                 if resp.status_code == 429:
-                    print(f"\n🚨 [RATE LIMIT] Status 429 no sumário do jogo {match_id} (Tentativa {attempt+1}/3)... Aguardando backoff!")
-                    time.sleep(0.4 * (attempt + 1))
+                    self._log_rate_issue(429, "df_sui", match_id, attempt)
+                    time.sleep(2 ** attempt)  # backoff exponencial: 1s, 2s, 4s
                     continue
                 elif resp.status_code == 403:
-                    print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 no jogo {match_id}!")
+                    self._log_rate_issue(403, "df_sui", match_id, attempt)
                     return data
                 elif resp.status_code != 200 or not resp.text:
                     return data
                 raw_text = resp.text
+                success = True
+                if self.delay_sumario > 0:
+                    time.sleep(self.delay_sumario)
                 break
-            except Exception:
+            except Exception as exc:
                 if attempt == 2:
                     return data
-                time.sleep(0.2)
-        else:
+                time.sleep(0.3)
+
+        # ─── PARSING (fora do for...else — executa sempre que success=True) ───
+        if not success or not raw_text:
             return data
-            events = raw_text.split('~')
-            
-            for event in events:
-                # Detecta gols normais (IE=3 / IK=Goal), gols contra (IE=4 / IK=Own Goal) e pênaltis convertidos (IE=10 / IK=Penalty)
-                # Ignora pênaltis perdidos (Penalty Missed / Missed Penalty / Awarded)
-                is_goal = False
-                if any(x in event for x in ['IE÷3', 'IE÷4', 'IE÷10', 'IE\xf73', 'IE\xf74', 'IE\xf710', 'IE\xac3', 'IE\xac4', 'IE\xac10']):
-                    is_goal = True
-                elif ('Goal' in event or 'Penalty' in event) and 'Missed' not in event and 'Awarded' not in event:
-                    is_goal = True
-                elif ('IK÷Penalty' in event or 'IK\xf7Penalty' in event or 'IK\xacPenalty' in event) and 'Missed' not in event:
-                    is_goal = True
-                
-                if is_goal:
-                    is_home = any(h in event for h in ['IA÷1', 'IA\xf71', 'IA\xac1'])
-                    is_away = any(a in event for a in ['IA÷2', 'IA\xf72', 'IA\xac2'])
-                    
-                    # Extrai minuto regulamentar base (ex: 45+2' -> 45, 90+6' -> 90) para não misturar 1T com 2T
-                    m_match = re.search(r'IB[\xac\xf7÷](\d+)', event)
-                    if m_match:
-                        minute = int(m_match.group(1))
-                        if is_home:
-                            data["Min_Goals_Home"].append(minute)
-                        elif is_away:
-                            data["Min_Goals_Away"].append(minute)
-            
-            data["Min_Goals_Home"].sort()
-            data["Min_Goals_Away"].sort()
-            
-            # Consulta o feed de cabeçalho dc_1 para obter notas de jogo/mata-mata (tag DM)
-            try:
-                url_dc = f"{self.feed_base_url}/dc_1_{match_id}"
-                resp_dc = self.session.get(url_dc, headers=self.headers_feed, timeout=1.2)
-                if resp_dc.status_code == 200 and resp_dc.text:
-                    m_dm = re.search(r'DM[\xac\xf7÷]([^\xac\xf7÷~]+)', resp_dc.text)
-                    if m_dm:
-                        note = m_dm.group(1).strip()
-                        data["Match_Note"] = note
-                        if 'Neutral location' in note:
-                            data["Neutral_Location"] = True
-            except Exception:
-                pass
-                
+
+        events = raw_text.split('~')
+
+        for event in events:
+            # Detecta gols normais (IE=3), gols contra (IE=4) e pênaltis convertidos (IE=10)
+            is_goal = False
+            if any(x in event for x in ['IE÷3', 'IE÷4', 'IE÷10', 'IE\xf73', 'IE\xf74', 'IE\xf710', 'IE\xac3', 'IE\xac4', 'IE\xac10']):
+                is_goal = True
+            elif ('Goal' in event or 'Penalty' in event) and 'Missed' not in event and 'Awarded' not in event:
+                is_goal = True
+            elif ('IK÷Penalty' in event or 'IK\xf7Penalty' in event or 'IK\xacPenalty' in event) and 'Missed' not in event:
+                is_goal = True
+
+            if is_goal:
+                is_home = any(h in event for h in ['IA÷1', 'IA\xf71', 'IA\xac1'])
+                is_away = any(a in event for a in ['IA÷2', 'IA\xf72', 'IA\xac2'])
+
+                m_match = re.search(r'IB[\xac\xf7÷](\d+)', event)
+                if m_match:
+                    minute = int(m_match.group(1))
+                    if is_home:
+                        data["Min_Goals_Home"].append(minute)
+                    elif is_away:
+                        data["Min_Goals_Away"].append(minute)
+
+        data["Min_Goals_Home"].sort()
+        data["Min_Goals_Away"].sort()
+
+        # Consulta o feed dc_1 para notas de mata-mata / local neutro
+        try:
+            url_dc = f"{self.feed_base_url}/dc_1_{match_id}"
+            resp_dc = self.session.get(url_dc, headers=self.headers_feed, timeout=5.0)
+            if resp_dc.status_code == 200 and resp_dc.text:
+                m_dm = re.search(r'DM[\xac\xf7÷]([^\xac\xf7÷~]+)', resp_dc.text)
+                if m_dm:
+                    note = m_dm.group(1).strip()
+                    data["Match_Note"] = note
+                    if 'Neutral location' in note:
+                        data["Neutral_Location"] = True
+        except Exception:
+            pass
+
         return data
 
     def get_match_statistics(self, match_id: str) -> Dict[str, Any]:
         """
         Extrai estatísticas completas de FT, HT e 2T (xG, chutes, posse, passes, etc.)
         via feed df_st em uma única requisição.
+
+        BUG FIX v3.0: idem ao get_match_summary — parsing movido para fora do for...else.
         """
         url = f"{self.feed_base_url}/df_st_1_{match_id}"
         stats_data = {
@@ -171,54 +219,61 @@ class FlashScoreAPIScraper:
             "Statistics_HT": {},
             "Statistics_2T": {}
         }
-        
+
         raw_text = ""
+        success = False
+
         for attempt in range(3):
             try:
-                resp = self.session.get(url, headers=self.headers_feed, timeout=2.0)
+                resp = self.session.get(url, headers=self.headers_feed, timeout=8.0)
                 if resp.status_code == 429:
-                    print(f"\n🚨 [RATE LIMIT] Status 429 em estatísticas do jogo {match_id} (Tentativa {attempt+1}/3)... Aguardando backoff!")
-                    time.sleep(0.4 * (attempt + 1))
+                    self._log_rate_issue(429, "df_st", match_id, attempt)
+                    time.sleep(2 ** attempt)
                     continue
                 elif resp.status_code == 403:
-                    print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 em estatísticas do jogo {match_id}!")
+                    self._log_rate_issue(403, "df_st", match_id, attempt)
                     return stats_data
                 elif resp.status_code != 200 or not resp.text:
                     return stats_data
                 raw_text = resp.text
+                success = True
+                if self.delay_stats > 0:
+                    time.sleep(self.delay_stats)
                 break
             except Exception:
                 if attempt == 2:
                     return stats_data
-                time.sleep(0.2)
-        else:
+                time.sleep(0.3)
+
+        # ─── PARSING (fora do for...else) ───
+        if not success or not raw_text:
             return stats_data
-            sections = raw_text.split('~')
-            current_stage = "Statistics_FT"
-            
-            for sec in sections:
-                if 'SE÷1st Half' in sec or 'SE\xf71st Half' in sec or 'SE\xac1st Half' in sec:
-                    current_stage = "Statistics_HT"
-                elif 'SE÷2nd Half' in sec or 'SE\xf72nd Half' in sec or 'SE\xac2nd Half' in sec:
-                    current_stage = "Statistics_2T"
-                elif 'SE÷Match' in sec or 'SE\xf7Match' in sec or 'SE\xacMatch' in sec:
-                    current_stage = "Statistics_FT"
-                
-                # Procura métricas: SG (nome da estatística), SH (valor Home), SI (valor Away)
-                m_sg = re.search(r'SG[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
-                m_sh = re.search(r'SH[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
-                m_si = re.search(r'SI[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
-                
-                if m_sg and m_sh and m_si:
-                    stat_name = m_sg.group(1).strip()
-                    val_h = self._parse_stat_value(m_sh.group(1).strip())
-                    val_a = self._parse_stat_value(m_si.group(1).strip())
-                    
-                    stats_data[current_stage][stat_name] = {
-                        "Home": val_h,
-                        "Away": val_a
-                    }
-                    
+
+        sections = raw_text.split('~')
+        current_stage = "Statistics_FT"
+
+        for sec in sections:
+            if 'SE÷1st Half' in sec or 'SE\xf71st Half' in sec or 'SE\xac1st Half' in sec:
+                current_stage = "Statistics_HT"
+            elif 'SE÷2nd Half' in sec or 'SE\xf72nd Half' in sec or 'SE\xac2nd Half' in sec:
+                current_stage = "Statistics_2T"
+            elif 'SE÷Match' in sec or 'SE\xf7Match' in sec or 'SE\xacMatch' in sec:
+                current_stage = "Statistics_FT"
+
+            m_sg = re.search(r'SG[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+            m_sh = re.search(r'SH[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+            m_si = re.search(r'SI[\xac\xf7÷]([^\xac\xf7÷~]+)', sec)
+
+            if m_sg and m_sh and m_si:
+                stat_name = m_sg.group(1).strip()
+                val_h = self._parse_stat_value(m_sh.group(1).strip())
+                val_a = self._parse_stat_value(m_si.group(1).strip())
+
+                stats_data[current_stage][stat_name] = {
+                    "Home": val_h,
+                    "Away": val_a
+                }
+
         return stats_data
 
     def _parse_stat_value(self, val_str: str) -> Any:
@@ -239,7 +294,7 @@ class FlashScoreAPIScraper:
         Extrai TODAS as Odds de TODAS as casas via API GraphQL oficial (OCE query).
         """
         url = f"{self.graphql_base_url}?_hash=oce&eventId={match_id}&projectId=2&geoIpCode=BR&geoIpSubdivisionCode=BRRS"
-        
+
         odds_result = {
             "Odds_1X2_FT": [],
             "Odds_1X2_HT": [],
@@ -273,299 +328,307 @@ class FlashScoreAPIScraper:
             "Best_Odd_X_FT": None,
             "Best_Odd_2_FT": None
         }
-        
+
         for line in ["0.5", "1.5", "2.5", "3.5", "4.5", "5.5", "6.5", "7.5", "8.5", "9.5", "10.5", "11.5"]:
             odds_result["Odds_OU_FT"][f"OU_{line}"] = []
         for line in ["0.5", "1.5", "2.5", "3.5", "4.5", "5.5", "6.5"]:
             odds_result["Odds_OU_HT"][f"OU_{line}"] = []
             odds_result["Odds_OU_2T"][f"OU_{line}"] = []
-            
+
+        json_data = None
+        success = False
+
         for attempt in range(3):
             try:
-                resp = self.session.get(url, headers=self.headers_graphql, timeout=2.0)
+                resp = self.session.get(url, headers=self.headers_graphql, timeout=10.0)
                 if resp.status_code == 429:
-                    print(f"\n🚨 [RATE LIMIT] Status 429 no GraphQL do jogo {match_id} (Tentativa {attempt+1}/3)... Aguardando backoff!")
-                    time.sleep(0.4 * (attempt + 1))
+                    self._log_rate_issue(429, "GraphQL_OCE", match_id, attempt)
+                    time.sleep(2 ** attempt)
                     continue
                 elif resp.status_code == 403:
-                    print(f"\n🚫 [BLOQUEIO CLOUDFLARE] Status 403 no GraphQL de Odds do jogo {match_id}!")
+                    self._log_rate_issue(403, "GraphQL_OCE", match_id, attempt)
                     return odds_result
                 elif resp.status_code != 200:
                     return odds_result
-                    
+
                 json_data = resp.json()
+                success = True
+                if self.delay_odds > 0:
+                    time.sleep(self.delay_odds)
                 break
             except Exception:
                 if attempt == 2:
                     return odds_result
-                time.sleep(0.2)
-        else:
+                time.sleep(0.3)
+
+        # ─── PARSING (fora do for...else) ───
+        if not success or not json_data:
             return odds_result
-            data_body = json_data.get("data", {}).get("findOddsByEventId", {})
-            
-            bookmaker_map = {}
-            for pb in data_body.get("settings", {}).get("bookmakers", []):
-                bm = pb.get("bookmaker", {})
-                b_id = bm.get("id")
-                b_name = bm.get("name")
-                if b_id and b_name:
-                    bookmaker_map[b_id] = b_name
-                    
-            odds_list = data_body.get("odds", [])
-            
-            # Identifica os IDs de participante de Mandante e Visitante
-            home_p_id, away_p_id = None, None
-            for item in odds_list:
-                if item.get("bettingType") == "HOME_DRAW_AWAY" and item.get("bettingScope") == "FULL_TIME":
-                    for o in item.get("odds", []):
-                        p_id = o.get("eventParticipantId")
-                        if p_id:
-                            if home_p_id is None:
-                                home_p_id = p_id
-                            elif away_p_id is None and p_id != home_p_id:
-                                away_p_id = p_id
-                    if home_p_id and away_p_id:
-                        break
-            
-            for item in odds_list:
-                b_id = item.get("bookmakerId")
-                bookie_name = bookmaker_map.get(b_id, f"Bookmaker_{b_id}")
-                b_type = item.get("bettingType")
-                b_scope = item.get("bettingScope")
-                sub_odds = item.get("odds", [])
-                
-                # --- 1X2 (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                if b_type == "HOME_DRAW_AWAY":
-                    odd_1, odd_x, odd_2 = None, None, None
-                    for o in sub_odds:
-                        val = self._safe_float(o.get("value"))
-                        p_id = o.get("eventParticipantId")
+
+        data_body = json_data.get("data", {}).get("findOddsByEventId", {})
+
+        bookmaker_map = {}
+        for pb in data_body.get("settings", {}).get("bookmakers", []):
+            bm = pb.get("bookmaker", {})
+            b_id = bm.get("id")
+            b_name = bm.get("name")
+            if b_id and b_name:
+                bookmaker_map[b_id] = b_name
+
+        odds_list = data_body.get("odds", [])
+
+        # Identifica os IDs de participante Mandante e Visitante
+        home_p_id, away_p_id = None, None
+        for item in odds_list:
+            if item.get("bettingType") == "HOME_DRAW_AWAY" and item.get("bettingScope") == "FULL_TIME":
+                for o in item.get("odds", []):
+                    p_id = o.get("eventParticipantId")
+                    if p_id:
+                        if home_p_id is None:
+                            home_p_id = p_id
+                        elif away_p_id is None and p_id != home_p_id:
+                            away_p_id = p_id
+                if home_p_id and away_p_id:
+                    break
+
+        for item in odds_list:
+            b_id = item.get("bookmakerId")
+            bookie_name = bookmaker_map.get(b_id, f"Bookmaker_{b_id}")
+            b_type = item.get("bettingType")
+            b_scope = item.get("bettingScope")
+            sub_odds = item.get("odds", [])
+
+            # --- 1X2 (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
+            if b_type == "HOME_DRAW_AWAY":
+                odd_1, odd_x, odd_2 = None, None, None
+                for o in sub_odds:
+                    val = self._safe_float(o.get("value"))
+                    p_id = o.get("eventParticipantId")
+                    if p_id is None:
+                        odd_x = val
+                    elif p_id == home_p_id or (home_p_id is None and odd_1 is None):
+                        odd_1 = val
+                    else:
+                        odd_2 = val
+
+                target_key = "Odds_1X2_FT" if b_scope == "FULL_TIME" else ("Odds_1X2_HT" if b_scope == "FIRST_HALF" else "Odds_1X2_2T")
+                if odd_1 or odd_x or odd_2:
+                    odds_result[target_key].append({
+                        "Bookmaker": bookie_name,
+                        "Odd_1": odd_1,
+                        "Odd_X": odd_x,
+                        "Odd_2": odd_2
+                    })
+
+            # --- OVER / UNDER ---
+            elif b_type == "OVER_UNDER":
+                target_dict = odds_result["Odds_OU_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_OU_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_OU_2T"])
+                for o in sub_odds:
+                    h_obj = o.get("handicap")
+                    h_val = h_obj.get("value") if isinstance(h_obj, dict) else h_obj
+                    sel = str(o.get("selection", "")).upper()
+                    val = self._safe_float(o.get("value"))
+                    if h_val:
+                        key = f"OU_{h_val}"
+                        if key not in target_dict:
+                            target_dict[key] = []
+                        entry = next((e for e in target_dict[key] if e["Bookmaker"] == bookie_name), None)
+                        if not entry:
+                            entry = {"Bookmaker": bookie_name, "Over": None, "Under": None}
+                            target_dict[key].append(entry)
+                        if "OVER" in sel:
+                            entry["Over"] = val
+                        elif "UNDER" in sel:
+                            entry["Under"] = val
+
+            # --- BOTH TEAMS TO SCORE ---
+            elif b_type == "BOTH_TEAMS_TO_SCORE":
+                yes_val, no_val = None, None
+                for o in sub_odds:
+                    btts_flag = o.get("bothTeamsToScore")
+                    val = self._safe_float(o.get("value"))
+                    if btts_flag is True or str(o.get("selection", "")).upper() == "YES":
+                        yes_val = val
+                    else:
+                        no_val = val
+                target_key = "Odds_BTTS_FT" if b_scope == "FULL_TIME" else ("Odds_BTTS_HT" if b_scope == "FIRST_HALF" else "Odds_BTTS_2T")
+                if yes_val or no_val:
+                    odds_result[target_key].append({
+                        "Bookmaker": bookie_name,
+                        "Yes": yes_val,
+                        "No": no_val
+                    })
+
+            # --- DOUBLE CHANCE ---
+            elif b_type == "DOUBLE_CHANCE":
+                dc_1x, dc_12, dc_x2 = None, None, None
+                for o in sub_odds:
+                    p_id = o.get("eventParticipantId")
+                    val = self._safe_float(o.get("value"))
+                    sel = str(o.get("selection", "")).upper() if o.get("selection") else ""
+                    if "1X" in sel or sel == "HOME_DRAW" or p_id == home_p_id:
+                        dc_1x = val
+                    elif "12" in sel or sel == "HOME_AWAY" or (p_id is None and val is not None):
+                        dc_12 = val
+                    elif "X2" in sel or sel == "DRAW_AWAY" or p_id == away_p_id:
+                        dc_x2 = val
+                target_key = "Odds_DC_FT" if b_scope == "FULL_TIME" else ("Odds_DC_HT" if b_scope == "FIRST_HALF" else "Odds_DC_2T")
+                if dc_1x or dc_12 or dc_x2:
+                    odds_result[target_key].append({
+                        "Bookmaker": bookie_name,
+                        "Odd_1X": dc_1x,
+                        "Odd_12": dc_12,
+                        "Odd_X2": dc_x2
+                    })
+
+            # --- DRAW NO BET ---
+            elif b_type == "DRAW_NO_BET":
+                dnb_1, dnb_2 = None, None
+                for o in sub_odds:
+                    p_id = o.get("eventParticipantId")
+                    val = self._safe_float(o.get("value"))
+                    if p_id == home_p_id or (home_p_id is None and dnb_1 is None):
+                        dnb_1 = val
+                    else:
+                        dnb_2 = val
+                target_key = "Odds_DNB_FT" if b_scope == "FULL_TIME" else ("Odds_DNB_HT" if b_scope == "FIRST_HALF" else "Odds_DNB_2T")
+                if dnb_1 or dnb_2:
+                    odds_result[target_key].append({
+                        "Bookmaker": bookie_name,
+                        "Home": dnb_1,
+                        "Away": dnb_2
+                    })
+
+            # --- ASIAN HANDICAP ---
+            elif b_type == "ASIAN_HANDICAP":
+                target_dict = odds_result["Odds_AH_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_AH_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_AH_2T"])
+                for o in sub_odds:
+                    p_id = o.get("eventParticipantId")
+                    h_obj = o.get("handicap")
+                    h_raw = h_obj.get("value") if isinstance(h_obj, dict) else h_obj
+                    val = self._safe_float(o.get("value"))
+                    if h_raw is not None and val is not None:
+                        try:
+                            h_num = float(h_raw)
+                        except ValueError:
+                            continue
+
+                        if p_id == away_p_id and away_p_id is not None:
+                            line_key = f"{(-h_num):+.1f}" if (-h_num) != 0 else "0.0"
+                            is_home_side = False
+                        else:
+                            line_key = f"{h_num:+.1f}" if h_num != 0 else "0.0"
+                            is_home_side = True
+
+                        key = f"AH_{line_key}"
+                        if key not in target_dict:
+                            target_dict[key] = []
+                        entry = next((e for e in target_dict[key] if e["Bookmaker"] == bookie_name), None)
+                        if not entry:
+                            entry = {"Bookmaker": bookie_name, "Home": None, "Away": None}
+                            target_dict[key].append(entry)
+                        if is_home_side:
+                            entry["Home"] = val
+                        else:
+                            entry["Away"] = val
+
+            # --- EUROPEAN HANDICAP ---
+            elif b_type == "EUROPEAN_HANDICAP":
+                target_dict = odds_result["Odds_EH_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_EH_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_EH_2T"])
+                for o in sub_odds:
+                    p_id = o.get("eventParticipantId")
+                    h_obj = o.get("handicap")
+                    h_raw = h_obj.get("value") if isinstance(h_obj, dict) else h_obj
+                    val = self._safe_float(o.get("value"))
+                    if h_raw is not None and val is not None:
+                        try:
+                            h_num = int(float(h_raw))
+                        except ValueError:
+                            continue
+
+                        line_key = f"{h_num:+d}"
+                        key = f"EH_{line_key}"
+                        if key not in target_dict:
+                            target_dict[key] = []
+                        entry = next((e for e in target_dict[key] if e["Bookmaker"] == bookie_name), None)
+                        if not entry:
+                            entry = {"Bookmaker": bookie_name, "Home": None, "Draw": None, "Away": None}
+                            target_dict[key].append(entry)
                         if p_id is None:
-                            odd_x = val
-                        elif p_id == home_p_id or (home_p_id is None and odd_1 is None):
-                            odd_1 = val
+                            entry["Draw"] = val
+                        elif p_id == home_p_id or (home_p_id is None and entry["Home"] is None):
+                            entry["Home"] = val
                         else:
-                            odd_2 = val
-                            
-                    target_key = "Odds_1X2_FT" if b_scope == "FULL_TIME" else ("Odds_1X2_HT" if b_scope == "FIRST_HALF" else "Odds_1X2_2T")
-                    if odd_1 or odd_x or odd_2:
-                        odds_result[target_key].append({
-                            "Bookmaker": bookie_name,
-                            "Odd_1": odd_1,
-                            "Odd_X": odd_x,
-                            "Odd_2": odd_2
-                        })
-                        
-                # --- OVER / UNDER (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                elif b_type == "OVER_UNDER":
-                    target_dict = odds_result["Odds_OU_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_OU_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_OU_2T"])
-                    for o in sub_odds:
-                        h_obj = o.get("handicap")
-                        h_val = h_obj.get("value") if isinstance(h_obj, dict) else h_obj
-                        sel = str(o.get("selection", "")).upper()
-                        val = self._safe_float(o.get("value"))
-                        if h_val:
-                            key = f"OU_{h_val}"
-                            if key not in target_dict:
-                                target_dict[key] = []
-                            entry = next((e for e in target_dict[key] if e["Bookmaker"] == bookie_name), None)
-                            if not entry:
-                                entry = {"Bookmaker": bookie_name, "Over": None, "Under": None}
-                                target_dict[key].append(entry)
-                            if "OVER" in sel:
-                                entry["Over"] = val
-                            elif "UNDER" in sel:
-                                entry["Under"] = val
+                            entry["Away"] = val
 
-                # --- BOTH TEAMS TO SCORE (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                elif b_type == "BOTH_TEAMS_TO_SCORE":
-                    yes_val, no_val = None, None
-                    for o in sub_odds:
-                        btts_flag = o.get("bothTeamsToScore")
-                        val = self._safe_float(o.get("value"))
-                        if btts_flag is True or str(o.get("selection", "")).upper() == "YES":
-                            yes_val = val
-                        else:
-                            no_val = val
-                    target_key = "Odds_BTTS_FT" if b_scope == "FULL_TIME" else ("Odds_BTTS_HT" if b_scope == "FIRST_HALF" else "Odds_BTTS_2T")
-                    if yes_val or no_val:
-                        odds_result[target_key].append({
+            # --- HALF / FULL TIME ---
+            elif b_type == "HALF_FULL_TIME" and b_scope == "FULL_TIME":
+                for o in sub_odds:
+                    winner = o.get("winner")  # ex: "1/1", "X/1", "2/1"
+                    val = self._safe_float(o.get("value"))
+                    if winner and val:
+                        key = winner.replace("/", "_")
+                        if key not in odds_result["Odds_HT_FT"]:
+                            odds_result["Odds_HT_FT"][key] = []
+                        odds_result["Odds_HT_FT"][key].append({
                             "Bookmaker": bookie_name,
-                            "Yes": yes_val,
-                            "No": no_val
+                            "Odd": val
                         })
 
-                # --- DOUBLE CHANCE (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                elif b_type == "DOUBLE_CHANCE":
-                    dc_1x, dc_12, dc_x2 = None, None, None
-                    for o in sub_odds:
-                        p_id = o.get("eventParticipantId")
-                        val = self._safe_float(o.get("value"))
-                        sel = str(o.get("selection", "")).upper() if o.get("selection") else ""
-                        if "1X" in sel or sel == "HOME_DRAW" or p_id == home_p_id:
-                            dc_1x = val
-                        elif "12" in sel or sel == "HOME_AWAY" or (p_id is None and val is not None):
-                            dc_12 = val
-                        elif "X2" in sel or sel == "DRAW_AWAY" or p_id == away_p_id:
-                            dc_x2 = val
-                    target_key = "Odds_DC_FT" if b_scope == "FULL_TIME" else ("Odds_DC_HT" if b_scope == "FIRST_HALF" else "Odds_DC_2T")
-                    if dc_1x or dc_12 or dc_x2:
-                        odds_result[target_key].append({
+            # --- ODD / EVEN ---
+            elif b_type == "ODD_OR_EVEN":
+                odd_val, even_val = None, None
+                for o in sub_odds:
+                    sel = str(o.get("selection", "")).upper()
+                    val = self._safe_float(o.get("value"))
+                    if "ODD" in sel:
+                        odd_val = val
+                    elif "EVEN" in sel:
+                        even_val = val
+                target_key = "Odds_OE_FT" if b_scope == "FULL_TIME" else ("Odds_OE_HT" if b_scope == "FIRST_HALF" else "Odds_OE_2T")
+                if odd_val or even_val:
+                    odds_result[target_key].append({
+                        "Bookmaker": bookie_name,
+                        "Odd": odd_val,
+                        "Even": even_val
+                    })
+
+            # --- CORRECT SCORE ---
+            elif b_type == "CORRECT_SCORE":
+                target_dict = odds_result["Odds_CS_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_CS_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_CS_2T"])
+                for o in sub_odds:
+                    sc = o.get("score")
+                    val = self._safe_float(o.get("value"))
+                    if sc and val:
+                        if sc not in target_dict:
+                            target_dict[sc] = []
+                        target_dict[sc].append({
                             "Bookmaker": bookie_name,
-                            "Odd_1X": dc_1x,
-                            "Odd_12": dc_12,
-                            "Odd_X2": dc_x2
+                            "Odd": val
                         })
 
-                # --- DRAW NO BET (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                elif b_type == "DRAW_NO_BET":
-                    dnb_1, dnb_2 = None, None
-                    for o in sub_odds:
-                        p_id = o.get("eventParticipantId")
-                        val = self._safe_float(o.get("value"))
-                        if p_id == home_p_id or (home_p_id is None and dnb_1 is None):
-                            dnb_1 = val
-                        else:
-                            dnb_2 = val
-                    target_key = "Odds_DNB_FT" if b_scope == "FULL_TIME" else ("Odds_DNB_HT" if b_scope == "FIRST_HALF" else "Odds_DNB_2T")
-                    if dnb_1 or dnb_2:
-                        odds_result[target_key].append({
-                            "Bookmaker": bookie_name,
-                            "Home": dnb_1,
-                            "Away": dnb_2
-                        })
-
-                # --- ASIAN HANDICAP (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                elif b_type == "ASIAN_HANDICAP":
-                    target_dict = odds_result["Odds_AH_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_AH_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_AH_2T"])
-                    # Agrupa por valor de handicap da casa
-                    for o in sub_odds:
-                        p_id = o.get("eventParticipantId")
-                        h_obj = o.get("handicap")
-                        h_raw = h_obj.get("value") if isinstance(h_obj, dict) else h_obj
-                        val = self._safe_float(o.get("value"))
-                        if h_raw is not None and val is not None:
-                            try:
-                                h_num = float(h_raw)
-                            except ValueError:
-                                continue
-                            
-                            # Normaliza a linha sempre em relação ao Mandante
-                            if p_id == away_p_id and away_p_id is not None:
-                                line_key = f"{(-h_num):+.1f}" if (-h_num) != 0 else "0.0"
-                                is_home_side = False
-                            else:
-                                line_key = f"{h_num:+.1f}" if h_num != 0 else "0.0"
-                                is_home_side = True
-                                
-                            key = f"AH_{line_key}"
-                            if key not in target_dict:
-                                target_dict[key] = []
-                            entry = next((e for e in target_dict[key] if e["Bookmaker"] == bookie_name), None)
-                            if not entry:
-                                entry = {"Bookmaker": bookie_name, "Home": None, "Away": None}
-                                target_dict[key].append(entry)
-                            if is_home_side:
-                                entry["Home"] = val
-                            else:
-                                entry["Away"] = val
-
-                # --- EUROPEAN HANDICAP (FULL_TIME, FIRST_HALF, SECOND_HALF) ---
-                elif b_type == "EUROPEAN_HANDICAP":
-                    target_dict = odds_result["Odds_EH_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_EH_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_EH_2T"])
-                    for o in sub_odds:
-                        p_id = o.get("eventParticipantId")
-                        h_obj = o.get("handicap")
-                        h_raw = h_obj.get("value") if isinstance(h_obj, dict) else h_obj
-                        val = self._safe_float(o.get("value"))
-                        if h_raw is not None and val is not None:
-                            try:
-                                h_num = int(float(h_raw))
-                            except ValueError:
-                                continue
-                                
-                            line_key = f"{h_num:+d}"
-                            key = f"EH_{line_key}"
-                            if key not in target_dict:
-                                target_dict[key] = []
-                            entry = next((e for e in target_dict[key] if e["Bookmaker"] == bookie_name), None)
-                            if not entry:
-                                entry = {"Bookmaker": bookie_name, "Home": None, "Draw": None, "Away": None}
-                                target_dict[key].append(entry)
-                            if p_id is None:
-                                entry["Draw"] = val
-                            elif p_id == home_p_id or (home_p_id is None and entry["Home"] is None):
-                                entry["Home"] = val
-                            else:
-                                entry["Away"] = val
-
-                # --- HALF / FULL TIME (HT/FT) ---
-                elif b_type == "HALF_FULL_TIME" and b_scope == "FULL_TIME":
-                    for o in sub_odds:
-                        winner = o.get("winner") # ex: "1/1", "X/1", "2/1", etc.
-                        val = self._safe_float(o.get("value"))
-                        if winner and val:
-                            key = winner.replace("/", "_")
-                            if key not in odds_result["Odds_HT_FT"]:
-                                odds_result["Odds_HT_FT"][key] = []
-                            odds_result["Odds_HT_FT"][key].append({
-                                "Bookmaker": bookie_name,
-                                "Odd": val
-                            })
-
-                # --- ODD / EVEN (ÍMPAR / PAR) ---
-                elif b_type == "ODD_OR_EVEN":
-                    odd_val, even_val = None, None
-                    for o in sub_odds:
-                        sel = str(o.get("selection", "")).upper()
-                        val = self._safe_float(o.get("value"))
-                        if "ODD" in sel:
-                            odd_val = val
-                        elif "EVEN" in sel:
-                            even_val = val
-                    target_key = "Odds_OE_FT" if b_scope == "FULL_TIME" else ("Odds_OE_HT" if b_scope == "FIRST_HALF" else "Odds_OE_2T")
-                    if odd_val or even_val:
-                        odds_result[target_key].append({
-                            "Bookmaker": bookie_name,
-                            "Odd": odd_val,
-                            "Even": even_val
-                        })
-
-                # --- CORRECT SCORE ---
-                elif b_type == "CORRECT_SCORE":
-                    target_dict = odds_result["Odds_CS_FT"] if b_scope == "FULL_TIME" else (odds_result["Odds_CS_HT"] if b_scope == "FIRST_HALF" else odds_result["Odds_CS_2T"])
-                    for o in sub_odds:
-                        sc = o.get("score")
-                        val = self._safe_float(o.get("value"))
-                        if sc and val:
-                            if sc not in target_dict:
-                                target_dict[sc] = []
-                            target_dict[sc].append({
-                                "Bookmaker": bookie_name,
-                                "Odd": val
-                            })
-
-            # Calcula Melhores Odds 1X2 FT
-            if odds_result["Odds_1X2_FT"]:
-                valid_1 = [x["Odd_1"] for x in odds_result["Odds_1X2_FT"] if x.get("Odd_1")]
-                valid_x = [x["Odd_X"] for x in odds_result["Odds_1X2_FT"] if x.get("Odd_X")]
-                valid_2 = [x["Odd_2"] for x in odds_result["Odds_1X2_FT"] if x.get("Odd_2")]
-                if valid_1:
-                    odds_result["Best_Odd_1_FT"] = max(valid_1)
-                if valid_x:
-                    odds_result["Best_Odd_X_FT"] = max(valid_x)
-                if valid_2:
-                    odds_result["Best_Odd_2_FT"] = max(valid_2)
+        # Calcula Melhores Odds 1X2 FT
+        if odds_result["Odds_1X2_FT"]:
+            valid_1 = [x["Odd_1"] for x in odds_result["Odds_1X2_FT"] if x.get("Odd_1")]
+            valid_x = [x["Odd_X"] for x in odds_result["Odds_1X2_FT"] if x.get("Odd_X")]
+            valid_2 = [x["Odd_2"] for x in odds_result["Odds_1X2_FT"] if x.get("Odd_2")]
+            if valid_1:
+                odds_result["Best_Odd_1_FT"] = max(valid_1)
+            if valid_x:
+                odds_result["Best_Odd_X_FT"] = max(valid_x)
+            if valid_2:
+                odds_result["Best_Odd_2_FT"] = max(valid_2)
 
         return odds_result
 
     def scrape_match(self, match_id: str, base_info: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Executa a raspagem completa de 1 partida via APIs em frações de segundo.
+        Retorna um dict com flags por endpoint para facilitar o diagnóstico.
         """
         match_data = base_info.copy() if base_info else {"Id": match_id, "Match_ID": match_id}
-        
-        # 1. Gols, Minutos e Notas de Partida/Mata-Mata
+
+        # 1. Sumário (df_sui) — Gols, Minutos e Notas
         summary = self.get_match_summary(match_id)
         match_data["Min_Goals_Home"] = summary.get("Min_Goals_Home", [])
         match_data["Min_Goals_Away"] = summary.get("Min_Goals_Away", [])
@@ -573,13 +636,18 @@ class FlashScoreAPIScraper:
             match_data["Match_Note"] = summary["Match_Note"]
         if summary.get("Neutral_Location"):
             match_data["Neutral_Location"] = True
-            
-        # 2. Estatísticas (FT, HT, 2T)
+
+        # 2. Estatísticas (df_st)
         stats = self.get_match_statistics(match_id)
         match_data.update(stats)
-        
-        # 3. Odds Completas (GraphQL)
+
+        # 3. Odds Completas (GraphQL OCE)
         odds = self.get_match_odds(match_id)
         match_data.update(odds)
-        
+
+        # Flags de diagnóstico (úteis para log no orquestrador)
+        match_data["_scraped_sui"] = bool(summary.get("Min_Goals_Home") is not None)
+        match_data["_scraped_st"] = bool(stats.get("Statistics_FT"))
+        match_data["_scraped_oce"] = bool(odds.get("Odds_1X2_FT"))
+
         return match_data
