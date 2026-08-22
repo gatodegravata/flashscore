@@ -42,7 +42,7 @@ class UltraBatchScraper:
         output_dir: str = "output_dataset",
         batch_size: int = 20000,
         workers: int = 32,
-        proxy_file: Optional[str] = "proxies.txt"
+        proxy_file: Optional[str] = None
     ):
         self.parquet_source = parquet_source
         self.output_dir = output_dir
@@ -306,6 +306,7 @@ if __name__ == "__main__":
     parser.add_argument("--workers", type=int, default=32, help="Número de threads simultâneas")
     parser.add_argument("--batch-size", type=int, default=20000, help="Quantidade de jogos por lote compactado")
     parser.add_argument("--output-dir", type=str, default="dataset_completo", help="Diretório de saída")
+    parser.add_argument("--proxy-file", type=str, default=None, help="Caminho para arquivo de proxies (opcional)")
     
     args = parser.parse_args()
     
@@ -313,6 +314,7 @@ if __name__ == "__main__":
         parquet_source=args.parquet,
         output_dir=args.output_dir,
         batch_size=args.batch_size,
-        workers=args.workers
+        workers=args.workers,
+        proxy_file=args.proxy_file
     )
     scraper.run()
