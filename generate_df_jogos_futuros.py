@@ -86,9 +86,8 @@ def process_match_to_row(match_data, prefer_bookmakers=['bet365', 'betfair', 'pi
     row['Date'] = match_data.get('Date')
     row['Time'] = match_data.get('Time')
     
-    # Padroniza o nome da liga automaticamente
-    original_league = match_data.get('League')
-    row['League'] = standardize_league_name(league_name=original_league)
+    # Padroniza o nome da liga diretamente do config/metadados
+    row['League'] = match_data.get('League') or match_data.get('liga_temporada', '')
     
     row['Round'] = match_data.get('Round')
     row['Home'] = match_data.get('Home')

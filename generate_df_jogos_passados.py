@@ -303,8 +303,8 @@ def process_match_to_row(match_data, league_name, country, season, prefer_bookma
     # Tournament_ID = código oficial de 8 caracteres do torneio no Flashscore (ex: "IDVz16ES")
     row['Tournament_ID'] = tournament_id or match_data.get('Tournament_ID') or match_data.get('tournament_id')
     
-    # League = nome padronizado (ex: "AUSTRALIA 3")
-    row['League'] = standardize_league_name(country=country, league=league_name)
+    # League = nome padronizado oficial (ex: "AUSTRALIA 3", "ENGLAND 1") que já vem do config/banco
+    row['League'] = league_name or match_data.get('League') or match_data.get('liga_temporada', '')
     
     # Formatação de Data para DD/MM/AAAA
     raw_date = match_data.get('Date')
