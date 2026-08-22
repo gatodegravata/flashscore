@@ -167,26 +167,7 @@ class FlashScoreAPIScraper:
         }
         
         try:
-            resp = self.session.get(url, headers=self.headers_feed, timeout=3.0)
-            if resp.status_code != 200 or not resp.text:
-                return stats_data
-                
-            raw_text = resp.text
-            sections = re.split(r'SE[\xac\xf7]', raw_text)
-            
-            for sec in sections[1:]:
-                header = sec.split('\xac')[0].split('\xf7')[0].strip()
-                target_dict = None
-                
-                if 'Match' in header:
-                    target_dict = stats_data["Statistics_FT"]
-                elif '1st Half' in header:
-                    target_dict = stats_data["Statistics_HT"]
-                elif '2nd Half' in header:
-                    target_dict = stats_data["Statistics_2T"]
-                    
-                if target_dict is None:
-                    continue
+            resp = self.session.get(url, headers=self.headers_feed, timeout=1.5)
             if resp.status_code == 429:
                 print(f"\n🚨 [RATE LIMIT] Status 429 em estatísticas do jogo {match_id}!")
                 return stats_data
