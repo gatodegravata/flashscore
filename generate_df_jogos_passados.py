@@ -22,7 +22,6 @@ import re
 from datetime import datetime
 import pandas as pd
 from pathlib import Path
-from league_mapping import standardize_league_name
 
 try:
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')

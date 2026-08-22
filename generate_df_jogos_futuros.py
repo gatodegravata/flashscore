@@ -14,7 +14,6 @@ import json
 import os
 import pandas as pd
 from pathlib import Path
-from league_mapping import standardize_league_name
 
 
 def find_best_bookmaker(odds_list, prefer=['bet365', 'betfair', 'pinnacle']):
