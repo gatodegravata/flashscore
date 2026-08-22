@@ -106,17 +106,17 @@ print(f"IP direto do Colab sempre será o slot 0 (prioritário).")
 
 ```python
 # ── CÉLULA 5: Rodar o scraper ─────────────────────────────────────────────────
-# Ajuste os parâmetros conforme necessário:
-#
-#   --workers      Coroutines simultâneas (8~16 costuma ser bom no Colab)
-#   --save-every   Salva parquet parcial a cada N jogos (menor = mais seguro, default 10000)
-#   --delay-odds   Delay em segundos no GraphQL de odds (aumente se tiver muitos 429)
-#   --delay-sumario / --delay-stats  idem para os outros endpoints
+# --direct-workers = quantos workers ficam EXCLUSIVAMENTE no IP do Colab
+# O restante dos workers é dividido entre os proxies selecionados.
+# Exemplo: --workers 12 --direct-workers 8
+#   → 8 workers no IP direto  (maioria do tráfego)
+#   → 4 workers nos proxies   (complemento)
 
 !python ultra_updater_massivo.py \
     --slice {SLICE} \
     --proxies {PROXIES} \
-    --workers 10 \
+    --workers 12 \
+    --direct-workers 8 \
     --save-every 5000 \
     --delay-odds 0.05
 ```
@@ -192,7 +192,8 @@ print(f"Artefatos copiados para: {DRIVE_DEST}")
 |---|---|---|
 | `--slice` | `None` | Fatia deste Colab (ex: `1/4`) |
 | `--proxies` | `None` | Índices de proxy do `.env` (ex: `1,3`) |
-| `--workers` | `8` | Coroutines assíncronas simultâneas |
+| `--workers` | `8` | Total de coroutines assíncronas simultâneas |
+| `--direct-workers` | `0` | Quantos workers ficam FIXOS no IP direto (0 = uniforme) |
 | `--batch-size` | `10000` | Tamanho do lote para o ZIP bruto |
 | `--save-every` | `10000` | Intervalo de save do parquet parcial |
 | `--delay-sumario` | `0.0` | Delay (s) após cada request `df_sui` |

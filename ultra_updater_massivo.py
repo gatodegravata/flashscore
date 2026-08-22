@@ -163,6 +163,12 @@ async def _async_get_with_retry(
                 )
                 return None
             elif resp.status_code != 200:
+                # Loga status inesperado para facilitar diagnóstico de proxy
+                if "IP_DIRETO" not in proxy_label:
+                    print(
+                        f"\n⚠️  [HTTP {resp.status_code}] endpoint={endpoint_label} | "
+                        f"match={match_id} | proxy={proxy_label} | url={url[:80]}"
+                    )
                 return None
             return resp
         except asyncio.CancelledError:
@@ -579,6 +585,7 @@ class UltraUpdaterAsync:
         delay_stats: float,
         delay_odds: float,
         save_every: int = 10_000,
+        direct_workers: int = 0,
     ):
         self.parquet_source = parquet_source
         self.output_dir = output_dir
@@ -589,6 +596,10 @@ class UltraUpdaterAsync:
         self.delay_stats = delay_stats
         self.delay_odds = delay_odds
         self.save_every = save_every
+        # direct_workers: quantos slots são fixados no IP direto do Colab.
+        # 0 = distribuição uniforme (comportamento antigo)
+        # N > 0 = primeiros N slots são IP_DIRETO, restantes distribuem nos proxies
+        self.direct_workers = direct_workers
 
         # Slug para nomes de arquivo (ex: "1_4")
         self.slice_slug = slice_part.replace("/", "_") if slice_part else "all"
@@ -713,7 +724,29 @@ class UltraUpdaterAsync:
         save_counter = [0]  # contador de saves intermediários para nomear arquivos
 
         semaphore = asyncio.Semaphore(self.workers)
-        num_slots = len(self.proxy_slots)
+        num_slots = len(self.proxy_slots)  # inclui slot 0 = IP_DIRETO
+        num_proxies = max(1, num_slots - 1)  # apenas os proxies pagos
+
+        # Calcula quantos workers ficam no IP direto
+        # Se direct_workers=0, distribui uniforme (1 slot por worker ciclicamente)
+        # Se direct_workers=N, os N primeiros slots são sempre IP_DIRETO
+        dw = self.direct_workers if self.direct_workers > 0 else 0
+
+        def _proxy_for_slot(slot_id: int) -> Tuple[Optional[str], str]:
+            """Mapeia slot_id -> (proxy_url, label), respeitando direct_workers."""
+            if dw > 0:
+                if slot_id < dw:
+                    # Slot reservado para IP direto
+                    return self.proxy_slots[0]  # (None, "IP_DIRETO")
+                else:
+                    # Slots restantes distribuem-se entre os proxies pagos
+                    proxy_only = self.proxy_slots[1:]  # exclui IP_DIRETO
+                    if not proxy_only:
+                        return self.proxy_slots[0]
+                    return proxy_only[(slot_id - dw) % len(proxy_only)]
+            else:
+                # Distribuição uniforme original
+                return self.proxy_slots[slot_id % num_slots]
 
         async def process_one(slot_id: int, meta: Dict[str, Any]):
             nonlocal completed, errors
@@ -722,7 +755,7 @@ class UltraUpdaterAsync:
             if not mid:
                 return
 
-            proxy_url, proxy_label = self.proxy_slots[slot_id % num_slots]
+            proxy_url, proxy_label = _proxy_for_slot(slot_id % self.workers)
 
             async with semaphore:
                 t0 = time.time()
@@ -971,6 +1004,14 @@ Exemplos de uso:
         "--save-every", type=int, default=10_000,
         help="Salva parquet parcial a cada N jogos processados (default: 10000)"
     )
+    parser.add_argument(
+        "--direct-workers", type=int, default=0,
+        help=(
+            "Número de workers exclusivamente no IP direto do Colab (slot 0). "
+            "Os demais workers distribuem-se entre os proxies. "
+            "0 = distribuição uniforme entre IP + proxies (default)."
+        )
+    )
 
     args = parser.parse_args()
 
@@ -993,5 +1034,6 @@ Exemplos de uso:
         delay_stats=args.delay_stats,
         delay_odds=args.delay_odds,
         save_every=args.save_every,
+        direct_workers=args.direct_workers,
     )
     updater.run()
