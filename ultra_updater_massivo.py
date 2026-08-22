@@ -524,9 +524,15 @@ async def scrape_match_async(
                     await asyncio.sleep(delay_odds)
                 match_data.update(_parse_odds(resp_oce.json()))
             except Exception:
+                # Se falhar o JSON, marca como lido mas vazio
+                match_data["_scraped_oce"] = True
                 match_data.update(_empty_odds())
         else:
-            # Garante que as chaves existam (vazias) mesmo sem dados
+            # 👇 A MÁGICA AQUI: Se a requisição retornou None (ex: Erro 500), 
+            # nós aceitamos a derrota, preenchemos com vazio e marcamos como True
+            # para não travar o salvamento da partida!
+            match_data["_scraped_oce"] = True 
+            
             for k, v in _empty_odds().items():
                 match_data.setdefault(k, v)
 
