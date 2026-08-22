@@ -510,7 +510,10 @@ async def scrape_match_async(
 
     # ── 3. GraphQL OCE (Odds) ─────────────────────────────────────────────────
     if need_oce:
-        url_oce = f"{GRAPHQL_BASE}?_hash=oce&eventId={match_id}&projectId=2&geoIpCode=BR"
+        url_oce = (
+            f"{GRAPHQL_BASE}?_hash=oce&eventId={match_id}"
+            f"&projectId=2&geoIpCode=BR&geoIpSubdivisionCode=BRRS"
+        )
         resp_oce = await _async_get_with_retry(
             session, url_oce, HEADERS_GRAPHQL, "GraphQL_OCE", match_id, proxy_label
         )
