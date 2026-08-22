@@ -366,6 +366,8 @@ async def _async_get_with_retry(
                     f"\n🚨 [HTTP {resp.status_code}] endpoint={endpoint_label} | "
                     f"match={match_id} | proxy={proxy_label} | url={url}"
                 )
+                if resp.text:
+                    print(f"🕵️ DETALHE DO ERRO: {resp.text}")
                 return None
             return resp
         except asyncio.CancelledError:
