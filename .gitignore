@@ -24,6 +24,7 @@ backups/
 .wdm/
 
 # Backups pesados de JSON (mantidos apenas localmente no PC)
+dataframes_jogos_passados/jogos_consolidados_completo.csv
 jogos_passados/
 dataframes_jogos_passados-old/
 *.json.zip
