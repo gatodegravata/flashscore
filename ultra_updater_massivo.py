@@ -62,7 +62,7 @@ class UltraBatchScraper:
         self.processed_ids = self._load_already_processed_ids()
         
     def _load_proxies(self) -> List[str]:
-        # 1. Tenta carregar arquivo local se existir
+        # Carrega proxies apenas se o usuário especificar um arquivo local existente
         if self.proxy_file and os.path.exists(self.proxy_file):
             with open(self.proxy_file, "r", encoding="utf-8") as f:
                 proxies = [l.strip() for l in f if l.strip() and not l.startswith("#")]
@@ -70,20 +70,7 @@ class UltraBatchScraper:
                     print(f"🔒 Carregados {len(proxies)} proxies do arquivo local {self.proxy_file}")
                     return proxies
                     
-        # 2. Se não tiver local (ex: no Colab), baixa a lista oficial do GitHub do projeto!
-        try:
-            import urllib.request
-            url = "https://raw.githubusercontent.com/gatodegravata/flashscore/refs/heads/main/proxies.txt"
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            content = urllib.request.urlopen(req, timeout=5).read().decode('utf-8')
-            proxies = [l.strip() for l in content.splitlines() if l.strip() and not l.startswith("#")]
-            if proxies:
-                print(f"🌐 Carregados {len(proxies)} proxies rotativos oficiais direto do GitHub!")
-                return proxies
-        except Exception:
-            pass
-            
-        print("⚡ Rodando com IP Direto (Fallback automático).")
+        print("⚡ Rodando com Conexão Direta (Sem proxy).")
         return []
 
     def _load_already_processed_ids(self) -> set:
