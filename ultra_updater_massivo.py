@@ -361,21 +361,22 @@ async def _async_get_with_retry(
                 )
                 return None
             elif resp.status_code != 200:
-                if proxy_label != "IP_DIRETO":
-                    print(
-                        f"\n[HTTP {resp.status_code}] endpoint={endpoint_label} | "
-                        f"match={match_id} | proxy={proxy_label}"
-                    )
+                # 🚨 Removido o 'if proxy_label != "IP_DIRETO":' para vermos todos os erros
+                print(
+                    f"\n🚨 [HTTP {resp.status_code}] endpoint={endpoint_label} | "
+                    f"match={match_id} | proxy={proxy_label} | url={url}"
+                )
                 return None
             return resp
         except asyncio.CancelledError:
             raise
-        except Exception:
+        except Exception as exc:
             if attempt == max_attempts - 1:
+                # 💥 Adicionado print para expor falhas de conexão/timeout
+                print(f"\n💥 [FALHA CONEXÃO] endpoint={endpoint_label} | proxy={proxy_label} | erro={exc}")
                 return None
             await asyncio.sleep(0.3)
     return None
-
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SCRAPER ASSÍNCRONO POR JOGO
