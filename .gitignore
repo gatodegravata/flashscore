@@ -7,6 +7,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 log.json
+.env
 
 # Cache temporário de HTMLs brutos
 raw_html/
@@ -40,3 +41,11 @@ flashscore_v2_results.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Log do SliceLog — sincronizado via GitHub API, nao via git push
+# (evita commits sujos no historico do repo)
+log/
+
+# Dados gerados pelo scraper (Parquets parciais, ZIPs, JSON cache)
+# Ficam no disco local/Colab; sincronize manualmente para o Drive se quiser
+dataset_completo/

@@ -41,16 +41,17 @@ print("Dependências instaladas!")
 
 ---
 
-## Célula 3 — Criar o arquivo `.env` com os proxies (SOMENTE NESTA SESSÃO)
+## Célula 3 — Criar o arquivo `.env` com os proxies e token GitHub (SOMENTE NESTA SESSÃO)
 
 > ⚠️ **Nunca faça commit deste conteúdo.** O `.env` criado aqui existe apenas
 > na memória volátil do Colab e será apagado ao reiniciar o runtime.
+> O `GITHUB_TOKEN` permite que o scraper sincronize o log de progresso
+> (`log/slice_X_Y.json`) diretamente com o GitHub via API — sem commits no histórico do repo.
 
 ```python
-# ── CÉLULA 3: Criar .env com credenciais de proxy ────────────────────────────
-# Cole aqui as suas credenciais. Elas NÃO serão gravadas no GitHub.
-
-env_content = """API_KEY_WEBSHARE=COLE_SUA_API_KEY_AQUI
+# ── CÉLULA 3: Criar .env com credenciais de proxy + GitHub ───────────────────
+env_content = """GITHUB_TOKEN=ghp_SEU_TOKEN_PESSOAL_AQUI
+API_KEY_WEBSHARE=COLE_SUA_API_KEY_AQUI
 WEBSHARE_PROXY_1=http://usuario:senha@ip1:porta
 WEBSHARE_PROXY_2=http://usuario:senha@ip2:porta
 WEBSHARE_PROXY_3=http://usuario:senha@ip3:porta
@@ -66,8 +67,12 @@ WEBSHARE_PROXY_10=http://usuario:senha@ip10:porta
 with open(".env", "w") as f:
     f.write(env_content)
 
-print(".env criado com sucesso (apenas nesta sessão).")
+print(".env criado (apenas nesta sessão).")
+print("GITHUB_TOKEN configurado — log será sincronizado com GitHub via API.")
 ```
+
+> **Permissão necessária no token:** `repo` (acesso de leitura/escrita ao repositório).
+> Crie em: GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens
 
 ---
 
