@@ -42,13 +42,15 @@ class UltraBatchScraper:
         output_dir: str = "output_dataset",
         batch_size: int = 20000,
         workers: int = 32,
-        proxy_file: Optional[str] = None
+        proxy_file: Optional[str] = None,
+        slice_part: Optional[str] = None
     ):
         self.parquet_source = parquet_source
         self.output_dir = output_dir
         self.batch_size = batch_size
         self.workers = workers
         self.proxy_file = proxy_file
+        self.slice_part = slice_part
         
         self.zips_dir = os.path.join(self.output_dir, "zips_json_bruto")
         self.checkpoints_dir = os.path.join(self.output_dir, "checkpoints")
@@ -111,6 +113,19 @@ class UltraBatchScraper:
         
         # Filtra apenas os IDs pendentes
         df_master = df_master.drop_duplicates(subset=[id_col])
+        
+        # Divisão da base por fatia/metade (ex: 1/2 ou 2/2) para rodar em múltiplos Colabs
+        if self.slice_part:
+            try:
+                part_idx, total_parts = map(int, self.slice_part.split('/'))
+                chunk_len = len(df_master) // total_parts
+                start_row = (part_idx - 1) * chunk_len
+                end_row = len(df_master) if part_idx == total_parts else part_idx * chunk_len
+                df_master = df_master.iloc[start_row:end_row].copy()
+                print(f"✂️ Fatia [{self.slice_part}] selecionada: Processando {len(df_master):,} partidas (linhas {start_row:,} até {end_row:,})")
+            except Exception as e:
+                print(f"⚠️ Erro ao interpretar --slice '{self.slice_part}': {e}. Usando base inteira.")
+                
         pending_mask = ~df_master[id_col].astype(str).isin(self.processed_ids)
         df_pending = df_master[pending_mask].copy()
         
@@ -307,6 +322,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", type=int, default=20000, help="Quantidade de jogos por lote compactado")
     parser.add_argument("--output-dir", type=str, default="dataset_completo", help="Diretório de saída")
     parser.add_argument("--proxy-file", type=str, default=None, help="Caminho para arquivo de proxies (opcional)")
+    parser.add_argument("--slice", type=str, default=None, help="Fatia da base para paralelismo em múltiplos Colabs (ex: '1/2', '2/2', '1/4', '2/4')")
     
     args = parser.parse_args()
     
@@ -315,6 +331,7 @@ if __name__ == "__main__":
         output_dir=args.output_dir,
         batch_size=args.batch_size,
         workers=args.workers,
-        proxy_file=args.proxy_file
+        proxy_file=args.proxy_file,
+        slice_part=args.slice
     )
     scraper.run()
